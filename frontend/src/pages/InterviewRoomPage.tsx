@@ -55,7 +55,7 @@ const InterviewRoomPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-brand-black text-zinc-100 overflow-hidden relative">
+    <div className="flex flex-col h-screen bg-brand-black text-zinc-100 overflow-hidden relative">
       <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-brand-orange/3 rounded-full blur-[140px] pointer-events-none" />
       <Sidebar />
       <main className="flex-1 p-8 overflow-y-auto relative z-10">

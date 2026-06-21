@@ -15,7 +15,7 @@ const DashboardPage: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div className="flex h-screen bg-brand-black text-zinc-100 overflow-hidden relative">
+    <div className="flex flex-col h-screen bg-brand-black text-zinc-100 overflow-hidden relative">
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-orange/3 rounded-full blur-[120px] pointer-events-none" />
       
