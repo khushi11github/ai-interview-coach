@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: #09090B;
+    color: #F4F4F5;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(255, 107, 0, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(255, 107, 0, 0.03) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
+
+/* Custom Utilities for Premium Orange-Black Theme */
+.glass-panel {
+  background: rgba(18, 18, 20, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 107, 0, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(255, 107, 0, 0.3);
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
+}
+
+.text-gradient-orange {
+  background: linear-gradient(135deg, #FFF 30%, #FF6B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-orange-pure {
+  background: linear-gradient(135deg, #FF9E59 0%, #FF6B00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #282830;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF6B00;
+}
+
+/* Premium CSS Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(255, 107, 0, 0.05); 
+    border-color: rgba(255, 107, 0, 0.08); 
+  }
+  50% { 
+    box-shadow: 0 0 28px rgba(255, 107, 0, 0.22); 
+    border-color: rgba(255, 107, 0, 0.35); 
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 3.5s ease-in-out infinite;
+}
+
+
+
