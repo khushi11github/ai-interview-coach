@@ -25,19 +25,25 @@ const mongoUri = process.env.MONGO_URI;
 
 async function startServer() {
   if (!mongoUri) {
-    console.error("MONGO_URI is missing. Add your MongoDB Atlas connection string to backend/.env.");
-    process.exit(1);
+    console.warn("MONGO_URI is missing. Starting server without database connection (dev mode).");
+    app.listen(port, () => {
+      console.log(`Server running on port ${port} (no DB)`);
+    });
+    return;
   }
 
-  await mongoose.connect(mongoUri);
-  console.log("Connected to MongoDB Atlas");
-
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
+  try {
+    await mongoose.connect(mongoUri);
+    console.log("Connected to MongoDB Atlas");
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to connect to MongoDB Atlas. Starting server without DB:", error.message || error);
+    app.listen(port, () => {
+      console.log(`Server running on port ${port} (DB unavailable)`);
+    });
+  }
 }
 
-startServer().catch((error) => {
-  console.error("Failed to start server", error);
-  process.exit(1);
-});
+startServer();

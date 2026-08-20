@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 const User = require("../models/User");
 
 const saltRounds = 10;
@@ -13,6 +14,9 @@ function toPublicUser(user) {
 }
 
 exports.signup = async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: "Database unavailable. Signup is disabled in this environment." });
+  }
   try {
     const { name, email, password } = req.body;
 
@@ -50,6 +54,9 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: "Database unavailable. Login is disabled in this environment." });
+  }
   try {
     const { email, password } = req.body;
 

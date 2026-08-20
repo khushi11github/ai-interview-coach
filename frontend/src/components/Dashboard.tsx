@@ -49,6 +49,34 @@ const Dashboard: React.FC = () => {
     }
   }, []);
 
+  // GSAP Entrance Animations
+  useEffect(() => {
+    const gsapLib = (window as any).gsap;
+    if (gsapLib) {
+      const tl = gsapLib.timeline({ defaults: { ease: 'power3.out' } });
+      
+      tl.fromTo('.dash-title', 
+        { opacity: 0, y: -25 },
+        { opacity: 1, y: 0, duration: 0.7 }
+      )
+      .fromTo('.metric-card',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 },
+        '-=0.4'
+      )
+      .fromTo('.content-panel',
+        { opacity: 0, y: 30, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1 },
+        '-=0.3'
+      )
+      .fromTo('.history-table',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.3'
+      );
+    }
+  }, [history, resume]);
+
   const userJson = localStorage.getItem('user');
   const user = userJson ? JSON.parse(userJson) : { name: 'Interviewee' };
 
@@ -118,7 +146,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8 pb-12">
       {/* Welcome header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 dash-title">
         <div>
           <h1 className="text-3xl font-extrabold text-zinc-100 tracking-tight">
             Welcome back, <span className="text-gradient-orange-pure">{user.name}</span>
@@ -130,7 +158,7 @@ const Dashboard: React.FC = () => {
 
         <button 
           onClick={() => navigate('/interview')}
-          className="flex items-center gap-2 px-5 py-3 bg-brand-orange hover:bg-brand-orange-hover text-white font-bold rounded-xl shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/35 hover:-translate-y-0.5 transition-all duration-300 group"
+          className="flex items-center gap-2 px-5 py-3 bg-brand-orange hover:bg-brand-orange-hover text-white font-bold rounded-xl shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/35 hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer border-0"
         >
           <Play className="w-4 h-4 fill-white" />
           <span>Launch Live Mock</span>
@@ -141,7 +169,7 @@ const Dashboard: React.FC = () => {
       {/* Metrics Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Sessions Card */}
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group">
+        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group metric-card">
           <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
             <Video className="w-12 h-12" />
           </div>
@@ -154,7 +182,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Avg Match Score Card */}
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group">
+        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group metric-card">
           <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
             <CheckCircle className="w-12 h-12" />
           </div>
@@ -171,7 +199,7 @@ const Dashboard: React.FC = () => {
         {/* ATS Score Card */}
         <div 
           onClick={() => navigate('/resume-analyzer')}
-          className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group cursor-pointer hover:border-brand-orange/20 transition-all duration-300"
+          className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group cursor-pointer hover:border-brand-orange/20 transition-all duration-300 metric-card"
         >
           <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
             <FileText className="w-12 h-12" />
@@ -187,7 +215,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Weak Areas Card */}
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group">
+        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group metric-card">
           <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
             <AlertCircle className="w-12 h-12" />
           </div>
@@ -211,7 +239,7 @@ const Dashboard: React.FC = () => {
       {/* Main Grid: Onboarding or Dashboard Analytics */}
       {!hasSessions ? (
         /* Onboarding Roadmap for New Users */
-        <div className="glass-panel p-8 rounded-3xl border border-brand-dark-border relative overflow-hidden">
+        <div className="glass-panel p-8 rounded-3xl border border-brand-dark-border relative overflow-hidden content-panel">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange/5 rounded-full blur-[80px] pointer-events-none" />
           <h2 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-brand-orange" />
@@ -269,7 +297,7 @@ const Dashboard: React.FC = () => {
         /* Grid: Charts + Quick Start (When history exists) */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recharts Skill Performance */}
-          <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 lg:col-span-2">
+          <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 lg:col-span-2 content-panel">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-bold text-zinc-100">Competency Performance</h3>
@@ -308,7 +336,7 @@ const Dashboard: React.FC = () => {
 
           {/* Quick Launch Cards */}
           <div className="space-y-5">
-            <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between h-[180px] group relative overflow-hidden">
+            <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between h-[180px] group relative overflow-hidden content-panel">
               <div className="absolute top-0 right-0 w-24 h-24 bg-brand-orange/5 rounded-full blur-2xl group-hover:bg-brand-orange/10 transition-colors pointer-events-none" />
               <div className="flex items-start justify-between">
                 <div className="p-3 bg-brand-orange/10 rounded-xl border border-brand-orange/20">
@@ -332,7 +360,7 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between h-[180px] group relative overflow-hidden">
+            <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between h-[180px] group relative overflow-hidden content-panel">
               <div className="absolute top-0 right-0 w-24 h-24 bg-brand-orange/5 rounded-full blur-2xl group-hover:bg-brand-orange/10 transition-colors pointer-events-none" />
               <div className="flex items-start justify-between">
                 <div className="p-3 bg-brand-orange/10 rounded-xl border border-brand-orange/20">
@@ -361,7 +389,7 @@ const Dashboard: React.FC = () => {
 
       {/* Recent History Table */}
       {hasSessions && (
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50">
+        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 history-table">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-zinc-100">Recent Sessions</h3>
             <span className="text-xs text-zinc-400 font-semibold">Showing past evaluations</span>
