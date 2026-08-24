@@ -20,6 +20,7 @@ const InterviewRoomPage: React.FC = () => {
     mode: 'ai' | 'peer';
     peerRole: 'candidate' | 'interviewer';
     syncMethod: 'localtab' | 'webrtc';
+    generatedQuestions?: string[];
     webrtcInstance?: any;
   } | null>(null);
 

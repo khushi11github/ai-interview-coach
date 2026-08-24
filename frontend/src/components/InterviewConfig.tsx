@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Video, AlertCircle, FileText, ChevronRight } from 'lucide-react';
+import { Video, AlertCircle, FileText, ChevronRight, Sparkles, RefreshCw } from 'lucide-react';
 import { WebRTCSync } from '../utils/p2pSync';
 
 interface InterviewConfigProps {
@@ -12,6 +12,7 @@ interface InterviewConfigProps {
     mode: 'ai' | 'peer';
     peerRole: 'candidate' | 'interviewer';
     syncMethod: 'localtab' | 'webrtc';
+    generatedQuestions?: string[];
     webrtcInstance?: any;
   }) => void;
 }
@@ -24,6 +25,8 @@ const InterviewConfig: React.FC<InterviewConfigProps> = ({ onStart }) => {
   const [useResumeQuestions, setUseResumeQuestions] = useState(false);
   const [resumeRole, setResumeRole] = useState('');
   const [sessionType, setSessionType] = useState<'verbal' | 'coding'>('verbal');
+  const [topic, setTopic] = useState('Core concepts');
+  const [generatedQuestions, setGeneratedQuestions] = useState<string[]>([]);
 
   // Multiplayer / P2P Configuration states
   const [mode, setMode] = useState<'ai' | 'peer'>('ai');
@@ -115,8 +118,20 @@ const InterviewConfig: React.FC<InterviewConfigProps> = ({ onStart }) => {
       mode,
       peerRole,
       syncMethod,
+      generatedQuestions: generatedQuestions.length > 0 ? generatedQuestions : undefined,
       webrtcInstance: webrtcRef.current
     });
+  };
+
+  const generateQuestions = () => {
+    const focus = topic === 'Core concepts' ? 'core concepts' : topic.toLowerCase();
+    const questionTemplates = [
+      `Explain how you would approach ${focus} as a ${role}, and describe the tradeoffs you would evaluate.`,
+      `Describe a production problem involving ${focus}. How would you investigate it and measure your fix?`,
+      `Design a practical ${role} solution centered on ${focus}. What would you build first, and why?`,
+      `What is a common mistake engineers make with ${focus}? Give an example and explain how you would prevent it.`
+    ];
+    setGeneratedQuestions(questionTemplates.slice(0, questionsCount));
   };
 
   const clearResumeQuestions = () => {
@@ -514,6 +529,44 @@ const InterviewConfig: React.FC<InterviewConfigProps> = ({ onStart }) => {
                 ))}
               </div>
             </div>
+          </div>
+
+          <div className="p-5 rounded-2xl border border-brand-orange/20 bg-brand-orange/5 space-y-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex gap-3">
+                <Sparkles className="w-5 h-5 text-brand-orange mt-0.5" />
+                <div>
+                  <span className="text-xs font-bold text-brand-orange uppercase tracking-wider">Question generator</span>
+                  <p className="text-xs text-zinc-400 mt-1">Create a fresh, focused question set for this session.</p>
+                </div>
+              </div>
+              {generatedQuestions.length > 0 && <span className="text-[10px] text-emerald-400 font-bold">{generatedQuestions.length} ready</span>}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
+              <select
+                value={topic}
+                onChange={(event) => setTopic(event.target.value)}
+                className="w-full bg-brand-black text-sm text-zinc-200 border border-brand-dark-border/80 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-orange"
+              >
+                <option>Core concepts</option>
+                <option>Architecture and design</option>
+                <option>Debugging and performance</option>
+                <option>Communication and leadership</option>
+              </select>
+              <button
+                type="button"
+                onClick={generateQuestions}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-brand-orange text-white text-xs font-bold hover:bg-brand-orange-hover transition-colors border-0 cursor-pointer"
+              >
+                {generatedQuestions.length > 0 ? <RefreshCw className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                {generatedQuestions.length > 0 ? 'Regenerate' : 'Generate set'}
+              </button>
+            </div>
+            {generatedQuestions.length > 0 && (
+              <ol className="space-y-2 text-xs text-zinc-300 list-decimal pl-5">
+                {generatedQuestions.map((question) => <li key={question}>{question}</li>)}
+              </ol>
+            )}
           </div>
         </div>
 

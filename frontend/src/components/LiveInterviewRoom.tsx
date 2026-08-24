@@ -25,6 +25,7 @@ interface LiveInterviewRoomProps {
     mode: 'ai' | 'peer';
     peerRole: 'candidate' | 'interviewer';
     syncMethod: 'localtab' | 'webrtc';
+    generatedQuestions?: string[];
     webrtcInstance?: any;
   };
   onFinish: (results: {
@@ -213,8 +214,12 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
   // Initialize questions
   useEffect(() => {
     let activeQuestions: string[] = [];
+
+    if (config.generatedQuestions && config.generatedQuestions.length > 0) {
+      activeQuestions = config.generatedQuestions;
+    }
     
-    if (config.useResumeQuestions) {
+    if (activeQuestions.length === 0 && config.useResumeQuestions) {
       const saved = localStorage.getItem('customQuestions');
       if (saved) {
         try {
@@ -234,9 +239,10 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
     }
     
     // Slice based on count requested
-    setQuestions(activeQuestions.slice(0, config.questionsCount));
-    setAnswers(new Array(activeQuestions.length).fill(''));
-    setWrittenCodes(new Array(activeQuestions.length).fill(''));
+    const selectedQuestions = activeQuestions.slice(0, config.questionsCount);
+    setQuestions(selectedQuestions);
+    setAnswers(new Array(selectedQuestions.length).fill(''));
+    setWrittenCodes(new Array(selectedQuestions.length).fill(''));
   }, [config]);
 
   // Update editor template when questions or language changes
@@ -273,7 +279,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
     return () => {
       stopMediaStream();
     };
-  }, [isCameraOn]);
+  }, [isCameraOn, isMicOn]);
 
   const stopMediaStream = () => {
     if (stream) {
