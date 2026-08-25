@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { Mail, Lock, User, ArrowRight, Sparkles, ShieldCheck, Zap } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Sparkles, Zap } from 'lucide-react';
+
 
 interface AuthFormProps {
   mode: 'signup' | 'login';
