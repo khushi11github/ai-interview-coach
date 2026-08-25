@@ -30,7 +30,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <header className="w-full bg-brand-black/95 border-b border-brand-dark-border/80 flex items-center justify-between px-8 py-4 select-none z-20 flex-shrink-0 relative overflow-hidden">
+    <header className="workspace-header w-full bg-brand-black/95 border-b border-brand-dark-border/80 flex items-center justify-between px-8 py-4 select-none z-20 flex-shrink-0 relative overflow-hidden">
       {/* Background subtle light line */}
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-orange/15 to-transparent" />
       
@@ -52,13 +52,13 @@ const Sidebar: React.FC = () => {
       </div>
 
       {/* Middle: Horizontal Navigation menu */}
-      <nav className="flex items-center gap-2">
+      <nav className="workspace-nav flex items-center gap-2">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) => `
-              flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-300 group border
+              flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-300 group border
               ${isActive 
                 ? 'bg-brand-orange/10 text-brand-orange border-brand-orange/20 shadow-md shadow-brand-orange/5' 
                 : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/50 border-transparent'

@@ -26,10 +26,10 @@
 
 /* Custom Utilities for Premium Orange-Black Theme */
 .glass-panel {
-  background: rgba(18, 18, 20, 0.7);
-  backdrop-filter: blur(12px);
+  background: rgba(18, 18, 20, 0.78);
+  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 107, 0, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
 .glass-panel-hover {
@@ -37,8 +37,20 @@
 }
 
 .glass-panel-hover:hover {
-  border-color: rgba(255, 107, 0, 0.3);
-  box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
+  border-color: rgba(255, 107, 0, 0.32);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.workspace-content > * {
+  animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.workspace-content .glass-panel {
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.14);
+}
+
+.workspace-content h1 {
+  line-height: 1.15;
 }
 
 .text-gradient-orange {

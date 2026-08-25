@@ -56,13 +56,14 @@ const InterviewRoomPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-brand-black text-zinc-100 overflow-hidden relative">
+    <div className="workspace-shell flex flex-col h-screen bg-brand-black text-zinc-100 overflow-hidden relative">
       <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-brand-orange/3 rounded-full blur-[140px] pointer-events-none" />
       <Sidebar />
-      <main className="flex-1 p-8 overflow-y-auto relative z-10">
-        {mode === 'config' && (
-          <InterviewConfig onStart={handleStartInterview} />
-        )}
+      <main className="workspace-main flex-1 overflow-y-auto relative z-10">
+        <div className="workspace-content workspace-content--room">
+          {mode === 'config' && (
+            <InterviewConfig onStart={handleStartInterview} />
+          )}
         
         {mode === 'active' && config && (
           config.mode === 'peer' && config.peerRole === 'interviewer' ? (
@@ -80,13 +81,14 @@ const InterviewRoomPage: React.FC = () => {
           )
         )}
 
-        {mode === 'report' && results && (
-          <InterviewReport 
-            results={results} 
-            onReset={() => setMode('config')} 
-            onGoHome={() => navigate('/dashboard')} 
-          />
-        )}
+          {mode === 'report' && results && (
+            <InterviewReport 
+              results={results} 
+              onReset={() => setMode('config')} 
+              onGoHome={() => navigate('/dashboard')} 
+            />
+          )}
+        </div>
       </main>
     </div>
   );

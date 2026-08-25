@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Video, FileText, CheckCircle, TrendingUp, AlertCircle, ArrowUpRight, Play, Sparkles } from 'lucide-react';
+import { Video, FileText, CheckCircle, TrendingUp, TrendingDown, AlertCircle, ArrowUpRight, Play, Sparkles, Target, ShieldCheck } from 'lucide-react';
 
 interface HistorySession {
   identifier: string;
@@ -103,6 +103,30 @@ const Dashboard: React.FC = () => {
   const avgConfidence = hasSessions
     ? Math.round(history.reduce((sum, s) => sum + s.confidence, 0) / sessionsCount)
     : 0;
+
+  const competencyScores = [
+    { label: 'Technical depth', value: avgTechnical },
+    { label: 'Communication', value: avgCommunication },
+    { label: 'Answer structure', value: avgStructure },
+    { label: 'Confidence', value: avgConfidence }
+  ];
+  const priorityCompetency = competencyScores.reduce((lowest, current) =>
+    current.value < lowest.value ? current : lowest,
+    competencyScores[0]
+  );
+  const recentHistory = history.slice(0, 3);
+  const previousHistory = history.slice(3, 6);
+  const recentAverage = recentHistory.length
+    ? Math.round(recentHistory.reduce((sum, session) => sum + session.score, 0) / recentHistory.length)
+    : 0;
+  const previousAverage = previousHistory.length
+    ? Math.round(previousHistory.reduce((sum, session) => sum + session.score, 0) / previousHistory.length)
+    : recentAverage;
+  const momentum = recentAverage - previousAverage;
+  const readinessScore = hasSessions
+    ? Math.round(avgScore * 0.45 + avgTechnical * 0.25 + avgCommunication * 0.15 + avgConfidence * 0.15)
+    : 0;
+  const readinessLabel = readinessScore >= 85 ? 'Interview ready' : readinessScore >= 70 ? 'Building consistency' : 'Foundational focus';
 
   // Extract unique weak areas from history
   const weakAreas: string[] = [];
@@ -295,7 +319,59 @@ const Dashboard: React.FC = () => {
         </div>
       ) : (
         /* Grid: Charts + Quick Start (When history exists) */
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="space-y-6">
+          {/* Readiness cockpit */}
+          <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 content-panel relative overflow-hidden">
+            <div className="absolute inset-y-0 right-0 w-1/3 bg-linear-to-l from-brand-orange/5 to-transparent pointer-events-none" />
+            <div className="relative flex flex-col lg:flex-row lg:items-center gap-6">
+              <div className="flex items-center gap-4 min-w-55">
+                <div className="relative w-20 h-20 flex items-center justify-center">
+                  <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 80 80" aria-hidden="true">
+                    <circle cx="40" cy="40" r="32" fill="none" stroke="#282830" strokeWidth="7" />
+                    <circle cx="40" cy="40" r="32" fill="none" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round" strokeDasharray="201" strokeDashoffset={201 - (201 * readinessScore) / 100} />
+                  </svg>
+                  <span className="text-xl font-extrabold text-zinc-100">{readinessScore}%</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-brand-orange">Readiness index</span>
+                  <h2 className="text-lg font-bold text-zinc-100 mt-1">{readinessLabel}</h2>
+                  <p className="text-xs text-zinc-500 mt-1">Weighted across your recorded performance</p>
+                </div>
+              </div>
+
+              <div className="h-px lg:h-12 lg:w-px bg-brand-dark-border/70" />
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 flex-1">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Momentum</span>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    {momentum >= 0 ? <TrendingUp className="w-4 h-4 text-emerald-400" /> : <TrendingDown className="w-4 h-4 text-red-400" />}
+                    <span className={`text-xl font-extrabold ${momentum >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{momentum >= 0 ? '+' : ''}{momentum}%</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-500 mt-1">vs. earlier sessions</p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Priority skill</span>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Target className="w-4 h-4 text-brand-orange" />
+                    <span className="text-sm font-bold text-zinc-200">{priorityCompetency.label}</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-500 mt-1">Current average: {priorityCompetency.value}%</p>
+                </div>
+                <div className="flex flex-col justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Next best action</span>
+                    <p className="text-xs text-zinc-300 mt-2 leading-relaxed">Run a focused mock to strengthen {priorityCompetency.label.toLowerCase()}.</p>
+                  </div>
+                  <button onClick={() => navigate('/interview')} className="self-start flex items-center gap-1.5 text-xs font-bold text-brand-orange hover:text-orange-300 transition-colors">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Practice priority skill <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recharts Skill Performance */}
           <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 lg:col-span-2 content-panel">
             <div className="flex items-center justify-between mb-6">
@@ -384,6 +460,7 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
           </div>
+        </div>
         </div>
       )}
 
