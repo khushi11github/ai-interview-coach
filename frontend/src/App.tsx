@@ -18,18 +18,20 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/home" replace /> : <Navigate to="/signup" replace />} />
+        <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/signup" replace />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         
         {/* Protected Routes */}
-        <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/home" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/welcome-hub" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/resume-analyzer" element={<ProtectedRoute><ResumeAnalyzerPage /></ProtectedRoute>} />
         <Route path="/interview" element={<ProtectedRoute><InterviewRoomPage /></ProtectedRoute>} />
         
         {/* Fallback route */}
-        <Route path="*" element={<Navigate to={user ? "/home" : "/login"} replace />} />
+        <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
+
       </Routes>
     </BrowserRouter>
   );

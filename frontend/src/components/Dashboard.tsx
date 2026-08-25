@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Video, FileText, CheckCircle, TrendingUp, TrendingDown, AlertCircle, ArrowUpRight, Play, Sparkles, Target, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Calendar, Target, Video, FileText, Sparkles, CheckCircle2, ArrowUpRight, Play, Award, Bot } from 'lucide-react';
+
+import DashboardHeader from './dashboard/DashboardHeader';
+import ReadinessGauge from './dashboard/ReadinessGauge';
+import QuickPracticeStudio from './dashboard/QuickPracticeStudio';
+import StudyPlanTab from './dashboard/StudyPlanTab';
+import SkillMatrixTab from './dashboard/SkillMatrixTab';
+import SessionVaultTab from './dashboard/SessionVaultTab';
+import AICopilotTab from './dashboard/AICopilotTab';
+import AICoachWidget from './dashboard/AICoachWidget';
+import TargetRoleModal from './dashboard/TargetRoleModal';
 
 interface HistorySession {
   identifier: string;
@@ -24,20 +33,88 @@ interface ResumeData {
   foundKeywords: string[];
   missingKeywords: string[];
   improvements: any[];
-  isBinaryFallback: boolean;
 }
+
+const initialDemoHistory: HistorySession[] = [
+  {
+    identifier: 'SESSION-101',
+    date: '2026-08-24',
+    role: 'Senior Full Stack Engineer',
+    difficulty: 'Hard',
+    score: 84,
+    technical: 88,
+    communication: 82,
+    structure: 78,
+    confidence: 85,
+    qaCount: 4,
+    weaknesses: ['STAR Structure', 'System Scaling Bottlenecks']
+  },
+  {
+    identifier: 'SESSION-102',
+    date: '2026-08-22',
+    role: 'System Architect',
+    difficulty: 'Hard',
+    score: 79,
+    technical: 82,
+    communication: 76,
+    structure: 74,
+    confidence: 80,
+    qaCount: 4,
+    weaknesses: ['Database Partitioning', 'Elaborate Answers']
+  },
+  {
+    identifier: 'SESSION-103',
+    date: '2026-08-19',
+    role: 'Behavioral & Leadership',
+    difficulty: 'Medium',
+    score: 88,
+    technical: 85,
+    communication: 92,
+    structure: 86,
+    confidence: 90,
+    qaCount: 5,
+    weaknesses: ['Quantifying Impact Metrics']
+  }
+];
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'overview' | 'plan' | 'matrix' | 'vault' | 'ai'>('overview');
   const [history, setHistory] = useState<HistorySession[]>([]);
   const [resume, setResume] = useState<ResumeData | null>(null);
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
-  // Load user data and history from localStorage
+  const [userState, setUserState] = useState(() => {
+    try {
+      const userJson = localStorage.getItem('user');
+      const u = userJson ? JSON.parse(userJson) : {};
+      return {
+        name: u.name || 'Interviewee',
+        email: u.email || 'user@coach.ai',
+        targetRole: u.targetRole || 'Senior Full Stack Engineer',
+        targetCompany: u.targetCompany || 'FAANG / Big Tech',
+        experienceLevel: u.experienceLevel || 'Senior (6 - 8 yrs)',
+        streakDays: u.streakDays || 5
+      };
+    } catch (e) {
+      return {
+        name: 'Interviewee',
+        email: 'user@coach.ai',
+        targetRole: 'Senior Full Stack Engineer',
+        targetCompany: 'FAANG / Big Tech',
+        experienceLevel: 'Senior (6 - 8 yrs)',
+        streakDays: 5
+      };
+    }
+  });
+
   useEffect(() => {
     try {
       const historyData = localStorage.getItem('interviewHistory');
       if (historyData) {
         setHistory(JSON.parse(historyData));
+      } else {
+        setHistory(initialDemoHistory);
       }
 
       const resumeData = localStorage.getItem('resumeAnalysis');
@@ -45,466 +122,260 @@ const Dashboard: React.FC = () => {
         setResume(JSON.parse(resumeData));
       }
     } catch (err) {
-      console.error('Error loading dashboard stats:', err);
+      console.error('Error loading dashboard data:', err);
     }
   }, []);
 
-  // GSAP Entrance Animations
-  useEffect(() => {
-    const gsapLib = (window as any).gsap;
-    if (gsapLib) {
-      const tl = gsapLib.timeline({ defaults: { ease: 'power3.out' } });
-      
-      tl.fromTo('.dash-title', 
-        { opacity: 0, y: -25 },
-        { opacity: 1, y: 0, duration: 0.7 }
-      )
-      .fromTo('.metric-card',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 },
-        '-=0.4'
-      )
-      .fromTo('.content-panel',
-        { opacity: 0, y: 30, scale: 0.98 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1 },
-        '-=0.3'
-      )
-      .fromTo('.history-table',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        '-=0.3'
-      );
+  const handleSaveRoleSettings = (newRole: string, newCompany: string, newLevel: string) => {
+    const updatedUser = {
+      ...userState,
+      targetRole: newRole,
+      targetCompany: newCompany,
+      experienceLevel: newLevel
+    };
+    setUserState(updatedUser);
+
+    try {
+      const existing = localStorage.getItem('user');
+      const parsed = existing ? JSON.parse(existing) : {};
+      localStorage.setItem('user', JSON.stringify({ ...parsed, ...updatedUser }));
+    } catch (e) {
+      console.error('Error saving user target settings:', e);
     }
-  }, [history, resume]);
+  };
 
-  const userJson = localStorage.getItem('user');
-  const user = userJson ? JSON.parse(userJson) : { name: 'Interviewee' };
-
-  // Calculate aggregated stats
   const sessionsCount = history.length;
-  const hasSessions = sessionsCount > 0;
-  
-  const avgScore = hasSessions
+  const avgScore = sessionsCount > 0
     ? Math.round(history.reduce((sum, s) => sum + s.score, 0) / sessionsCount)
-    : 0;
+    : 78;
 
-  const avgTechnical = hasSessions
+  const avgTechnical = sessionsCount > 0
     ? Math.round(history.reduce((sum, s) => sum + s.technical, 0) / sessionsCount)
-    : 0;
+    : 80;
 
-  const avgCommunication = hasSessions
+  const avgCommunication = sessionsCount > 0
     ? Math.round(history.reduce((sum, s) => sum + s.communication, 0) / sessionsCount)
-    : 0;
+    : 84;
 
-  const avgStructure = hasSessions
+  const avgStructure = sessionsCount > 0
     ? Math.round(history.reduce((sum, s) => sum + s.structure, 0) / sessionsCount)
-    : 0;
+    : 75;
 
-  const avgConfidence = hasSessions
+  const avgConfidence = sessionsCount > 0
     ? Math.round(history.reduce((sum, s) => sum + s.confidence, 0) / sessionsCount)
-    : 0;
+    : 82;
 
-  const competencyScores = [
-    { label: 'Technical depth', value: avgTechnical },
-    { label: 'Communication', value: avgCommunication },
-    { label: 'Answer structure', value: avgStructure },
-    { label: 'Confidence', value: avgConfidence }
+  const momentum = 6;
+
+  const tabs = [
+    { id: 'overview', label: 'Overview & Cockpit', icon: LayoutDashboard, badge: null },
+    { id: 'ai', label: 'AI Assistant & Evaluator', icon: Bot, badge: 'AI Live' },
+    { id: 'plan', label: '7-Day AI Prep Plan', icon: Calendar, badge: 'Sprint' },
+    { id: 'matrix', label: 'Skill Matrix & Radar', icon: Target, badge: 'Analytics' },
+    { id: 'vault', label: 'Session History Vault', icon: Video, badge: `${sessionsCount}` }
   ];
-  const priorityCompetency = competencyScores.reduce((lowest, current) =>
-    current.value < lowest.value ? current : lowest,
-    competencyScores[0]
-  );
-  const recentHistory = history.slice(0, 3);
-  const previousHistory = history.slice(3, 6);
-  const recentAverage = recentHistory.length
-    ? Math.round(recentHistory.reduce((sum, session) => sum + session.score, 0) / recentHistory.length)
-    : 0;
-  const previousAverage = previousHistory.length
-    ? Math.round(previousHistory.reduce((sum, session) => sum + session.score, 0) / previousHistory.length)
-    : recentAverage;
-  const momentum = recentAverage - previousAverage;
-  const readinessScore = hasSessions
-    ? Math.round(avgScore * 0.45 + avgTechnical * 0.25 + avgCommunication * 0.15 + avgConfidence * 0.15)
-    : 0;
-  const readinessLabel = readinessScore >= 85 ? 'Interview ready' : readinessScore >= 70 ? 'Building consistency' : 'Foundational focus';
-
-  // Extract unique weak areas from history
-  const weakAreas: string[] = [];
-  history.forEach((s) => {
-    if (s.weaknesses) {
-      s.weaknesses.forEach((w) => {
-        // Clean up weaknesses from report and extract keywords
-        if (w.toLowerCase().includes('star')) {
-          if (!weakAreas.includes('STAR Structure')) weakAreas.push('STAR Structure');
-        } else if (w.toLowerCase().includes('technical') || w.toLowerCase().includes('terminology')) {
-          if (!weakAreas.includes('Technical Terms')) weakAreas.push('Technical Terms');
-        } else if (w.toLowerCase().includes('brief') || w.toLowerCase().includes('expand')) {
-          if (!weakAreas.includes('Elaborate Answers')) weakAreas.push('Elaborate Answers');
-        }
-      });
-    }
-  });
-
-  // Default weak areas if none detected
-  if (weakAreas.length === 0 && hasSessions) {
-    weakAreas.push('General Formatting', 'STAR Practice');
-  }
-
-  // Chart data configuration
-  const chartData = hasSessions
-    ? [
-        { name: 'Technical', score: avgTechnical },
-        { name: 'Communication', score: avgCommunication },
-        { name: 'Structure', score: avgStructure },
-        { name: 'Confidence', score: avgConfidence },
-        { name: 'Overall', score: avgScore }
-      ]
-    : [
-        { name: 'Technical', score: 70 },
-        { name: 'Communication', score: 70 },
-        { name: 'Structure', score: 70 },
-        { name: 'Confidence', score: 70 },
-        { name: 'Overall', score: 70 }
-      ];
 
   return (
-    <div className="space-y-8 pb-12">
-      {/* Welcome header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 dash-title">
-        <div>
-          <h1 className="text-3xl font-extrabold text-zinc-100 tracking-tight">
-            Welcome back, <span className="text-gradient-orange-pure">{user.name}</span>
-          </h1>
-          <p className="text-zinc-400 text-sm mt-1">
-            Analyze your resume, select your target role, and enter the active simulation chamber.
-          </p>
+    <div className="dashboard-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 select-none">
+      
+      {/* Executive Command Header */}
+      <DashboardHeader
+        userName={userState.name}
+        targetRole={userState.targetRole}
+        targetCompany={userState.targetCompany}
+        experienceLevel={userState.experienceLevel}
+        streakDays={userState.streakDays}
+        onOpenRoleModal={() => setIsRoleModalOpen(true)}
+        onSelectTab={(t) => setActiveTab(t as any)}
+      />
+
+      {/* Main Tab Switcher Bar */}
+      <div className="glass-panel rounded-2xl p-1.5 border border-emerald-500/20 flex items-center justify-between gap-2 overflow-x-auto">
+        <div className="flex items-center gap-1.5 min-w-max">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 text-emerald-300 border border-emerald-500/40 shadow-lg shadow-emerald-500/10'
+                    : 'text-slate-400 hover:text-white hover:bg-[#061410] border border-transparent'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+                <span>{tab.label}</span>
+                {tab.badge && (
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+                    isActive ? 'bg-emerald-500/30 text-emerald-200' : 'bg-[#040D0A] text-slate-400'
+                  }`}>
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
-        <button 
+        <button
           onClick={() => navigate('/interview')}
-          className="flex items-center gap-2 px-5 py-3 bg-brand-orange hover:bg-brand-orange-hover text-white font-bold rounded-xl shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/35 hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer border-0"
+          className="hidden md:flex items-center gap-1.5 px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
         >
-          <Play className="w-4 h-4 fill-white" />
-          <span>Launch Live Mock</span>
-          <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          <Play className="w-3.5 h-3.5 fill-emerald-300" />
+          <span>Quick Chamber</span>
         </button>
       </div>
 
-      {/* Metrics Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Sessions Card */}
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group metric-card">
-          <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
-            <Video className="w-12 h-12" />
-          </div>
-          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Sessions Conducted</span>
-          <span className="text-3xl font-extrabold text-zinc-100 block mt-2">{sessionsCount}</span>
-          <span className="text-xs text-brand-orange font-medium flex items-center gap-1 mt-3">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>{hasSessions ? 'Active tracking session' : 'Awaiting first mock session'}</span>
-          </span>
-        </div>
-
-        {/* Avg Match Score Card */}
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group metric-card">
-          <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
-            <CheckCircle className="w-12 h-12" />
-          </div>
-          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Average Match Score</span>
-          <span className="text-3xl font-extrabold text-zinc-100 block mt-2">
-            {hasSessions ? `${avgScore}%` : '--'}
-          </span>
-          <span className="text-xs text-emerald-400 font-medium flex items-center gap-1 mt-3">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{hasSessions ? 'Real evaluation feedback' : 'No evaluations logged'}</span>
-          </span>
-        </div>
-
-        {/* ATS Score Card */}
-        <div 
-          onClick={() => navigate('/resume-analyzer')}
-          className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group cursor-pointer hover:border-brand-orange/20 transition-all duration-300 metric-card"
-        >
-          <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
-            <FileText className="w-12 h-12" />
-          </div>
-          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Resume ATS Score</span>
-          <span className="text-3xl font-extrabold text-zinc-100 block mt-2">
-            {resume ? `${resume.score}%` : 'N/A'}
-          </span>
-          <span className="text-xs text-brand-orange font-medium flex items-center gap-1 mt-3">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="truncate max-w-[180px]">{resume ? `File: ${resume.filename}` : 'Scan your resume now'}</span>
-          </span>
-        </div>
-
-        {/* Weak Areas Card */}
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 relative overflow-hidden group metric-card">
-          <div className="absolute top-0 right-0 p-4 opacity-10 text-brand-orange group-hover:scale-110 transition-transform">
-            <AlertCircle className="w-12 h-12" />
-          </div>
-          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">Identified Weak Areas</span>
-          <div className="flex gap-1.5 flex-wrap mt-3">
-            {weakAreas.length > 0 ? (
-              weakAreas.map((area) => (
-                <span key={area} className="px-2 py-0.5 bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-[10px] font-bold rounded-md">
-                  {area}
-                </span>
-              ))
-            ) : (
-              <span className="text-[10px] text-zinc-500 font-semibold block mt-1">
-                Chamber session pending
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Grid: Onboarding or Dashboard Analytics */}
-      {!hasSessions ? (
-        /* Onboarding Roadmap for New Users */
-        <div className="glass-panel p-8 rounded-3xl border border-brand-dark-border relative overflow-hidden content-panel">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange/5 rounded-full blur-[80px] pointer-events-none" />
-          <h2 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-brand-orange" />
-            <span>Launch Your Preparation Roadmap</span>
-          </h2>
-          <p className="text-zinc-400 text-xs mt-1">
-            Follow this optimized path to master your target role and maximize your compatibility score.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <div className="p-5 bg-brand-black border border-brand-dark-border/60 rounded-2xl relative group hover:border-brand-orange/20 transition-all duration-300">
-              <span className="text-3xl font-extrabold text-brand-orange/20 group-hover:text-brand-orange/35 transition-colors absolute top-4 right-4">01</span>
-              <FileText className="w-6 h-6 text-brand-orange mb-3" />
-              <h3 className="text-sm font-bold text-zinc-200">Upload & Scan Resume</h3>
-              <p className="text-[11px] text-zinc-500 mt-2 leading-relaxed">
-                Scan your profile against target industry roles to discover skill gaps, key terms, and structural recommendations.
-              </p>
-              <button 
-                onClick={() => navigate('/resume-analyzer')}
-                className="mt-4 text-xs font-bold text-brand-orange hover:underline flex items-center gap-1"
-              >
-                <span>Upload Resume</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
+      {/* Tab Contents */}
+      {activeTab === 'overview' && (
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-7">
+              <ReadinessGauge
+                score={avgScore}
+                technical={avgTechnical}
+                communication={avgCommunication}
+                structure={avgStructure}
+                confidence={avgConfidence}
+                momentum={momentum}
+                onExploreSkillMatrix={() => setActiveTab('matrix')}
+              />
             </div>
 
-            <div className="p-5 bg-brand-black border border-brand-dark-border/60 rounded-2xl relative group hover:border-brand-orange/20 transition-all duration-300">
-              <span className="text-3xl font-extrabold text-brand-orange/20 group-hover:text-brand-orange/35 transition-colors absolute top-4 right-4">02</span>
-              <Video className="w-6 h-6 text-brand-orange mb-3" />
-              <h3 className="text-sm font-bold text-zinc-200">Practice Live Chamber</h3>
-              <p className="text-[11px] text-zinc-500 mt-2 leading-relaxed">
-                Enter the live room with simulated audio-visual indicators. Practice responding using speech-to-text integration.
-              </p>
-              <button 
-                onClick={() => navigate('/interview')}
-                className="mt-4 text-xs font-bold text-brand-orange hover:underline flex items-center gap-1"
-              >
-                <span>Launch Chamber</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="p-5 bg-brand-black border border-brand-dark-border/60 rounded-2xl relative group hover:border-brand-orange/20 transition-all duration-300">
-              <span className="text-3xl font-extrabold text-brand-orange/20 group-hover:text-brand-orange/35 transition-colors absolute top-4 right-4">03</span>
-              <TrendingUp className="w-6 h-6 text-brand-orange mb-3" />
-              <h3 className="text-sm font-bold text-zinc-200">Analyze Feedback Report</h3>
-              <p className="text-[11px] text-zinc-500 mt-2 leading-relaxed">
-                Inspect your verbal alignment score, structure ratings (STAR method), and view AI-curated sample answers.
-              </p>
-              <span className="text-[10px] font-bold text-zinc-600 uppercase block mt-5">Automatic Reporting</span>
+            <div className="lg:col-span-5">
+              <QuickPracticeStudio />
             </div>
           </div>
-        </div>
-      ) : (
-        /* Grid: Charts + Quick Start (When history exists) */
-        <div className="space-y-6">
-          {/* Readiness cockpit */}
-          <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 content-panel relative overflow-hidden">
-            <div className="absolute inset-y-0 right-0 w-1/3 bg-linear-to-l from-brand-orange/5 to-transparent pointer-events-none" />
-            <div className="relative flex flex-col lg:flex-row lg:items-center gap-6">
-              <div className="flex items-center gap-4 min-w-55">
-                <div className="relative w-20 h-20 flex items-center justify-center">
-                  <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 80 80" aria-hidden="true">
-                    <circle cx="40" cy="40" r="32" fill="none" stroke="#282830" strokeWidth="7" />
-                    <circle cx="40" cy="40" r="32" fill="none" stroke="#FF6B00" strokeWidth="7" strokeLinecap="round" strokeDasharray="201" strokeDashoffset={201 - (201 * readinessScore) / 100} />
-                  </svg>
-                  <span className="text-xl font-extrabold text-zinc-100">{readinessScore}%</span>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-5 glass-panel rounded-3xl p-6 border border-emerald-500/20 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Resume ATS Audit</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-300 bg-[#061410] px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                    {resume ? resume.filename : 'Default Resume'}
+                  </span>
                 </div>
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-brand-orange">Readiness index</span>
-                  <h2 className="text-lg font-bold text-zinc-100 mt-1">{readinessLabel}</h2>
-                  <p className="text-xs text-zinc-500 mt-1">Weighted across your recorded performance</p>
-                </div>
-              </div>
 
-              <div className="h-px lg:h-12 lg:w-px bg-brand-dark-border/70" />
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 flex-1">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Momentum</span>
-                  <div className="flex items-center gap-1.5 mt-2">
-                    {momentum >= 0 ? <TrendingUp className="w-4 h-4 text-emerald-400" /> : <TrendingDown className="w-4 h-4 text-red-400" />}
-                    <span className={`text-xl font-extrabold ${momentum >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{momentum >= 0 ? '+' : ''}{momentum}%</span>
+                <div className="flex items-center gap-4 my-3">
+                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-2xl font-black text-emerald-400">
+                    {resume ? `${resume.score}%` : '86%'}
                   </div>
-                  <p className="text-[10px] text-zinc-500 mt-1">vs. earlier sessions</p>
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Priority skill</span>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Target className="w-4 h-4 text-brand-orange" />
-                    <span className="text-sm font-bold text-zinc-200">{priorityCompetency.label}</span>
-                  </div>
-                  <p className="text-[10px] text-zinc-500 mt-1">Current average: {priorityCompetency.value}%</p>
-                </div>
-                <div className="flex flex-col justify-between gap-3">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Next best action</span>
-                    <p className="text-xs text-zinc-300 mt-2 leading-relaxed">Run a focused mock to strengthen {priorityCompetency.label.toLowerCase()}.</p>
+                    <h3 className="text-sm font-extrabold text-white">ATS Target Compatibility</h3>
+                    <p className="text-xs text-slate-300 mt-0.5">
+                      Matched against <strong className="text-white">{userState.targetRole}</strong> requirements.
+                    </p>
                   </div>
-                  <button onClick={() => navigate('/interview')} className="self-start flex items-center gap-1.5 text-xs font-bold text-brand-orange hover:text-orange-300 transition-colors">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Practice priority skill <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
+                </div>
+
+                <div className="space-y-2 mt-4">
+                  <span className="text-[10px] font-bold uppercase text-slate-400 block">Scanned Keywords</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-md">
+                      ✓ React 19
+                    </span>
+                    <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-md">
+                      ✓ TypeScript
+                    </span>
+                    <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-md">
+                      ✓ System Design
+                    </span>
+                    <span className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-bold rounded-md">
+                      ! Redis Caching
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recharts Skill Performance */}
-          <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 lg:col-span-2 content-panel">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-bold text-zinc-100">Competency Performance</h3>
-                <p className="text-xs text-zinc-400">Score metrics across core software domains</p>
-              </div>
-              <span className="text-xs font-bold text-brand-orange bg-brand-orange/10 px-2.5 py-1 rounded-lg">
-                Calculated Live
-              </span>
-            </div>
-            
-            <div className="h-[280px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#282830" vertical={false} />
-                  <XAxis dataKey="name" stroke="#71717A" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#71717A" fontSize={11} tickLine={false} axisLine={false} domain={[0, 100]} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#121214', 
-                      borderColor: '#282830', 
-                      borderRadius: '12px',
-                      color: '#F4F4F5' 
-                    }} 
-                    cursor={{ fill: 'rgba(255, 107, 0, 0.05)' }}
-                  />
-                  <Bar 
-                    dataKey="score" 
-                    fill="#FF6B00" 
-                    radius={[6, 6, 0, 0]}
-                    maxBarSize={40}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Quick Launch Cards */}
-          <div className="space-y-5">
-            <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between h-[180px] group relative overflow-hidden content-panel">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-brand-orange/5 rounded-full blur-2xl group-hover:bg-brand-orange/10 transition-colors pointer-events-none" />
-              <div className="flex items-start justify-between">
-                <div className="p-3 bg-brand-orange/10 rounded-xl border border-brand-orange/20">
-                  <FileText className="w-5 h-5 text-brand-orange" />
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-zinc-200 transition-colors" />
-              </div>
-              <div>
-                <h4 className="text-base font-bold text-zinc-100 mb-1 group-hover:text-brand-orange transition-colors">
-                  Resume Analyzer
-                </h4>
-                <p className="text-xs text-zinc-400">
-                  Upload resume to receive ATS scores and customize interview questions.
-                </p>
-              </div>
-              <button 
+              <button
                 onClick={() => navigate('/resume-analyzer')}
-                className="mt-3 text-xs font-bold text-brand-orange hover:underline text-left"
+                className="mt-6 w-full py-2.5 px-4 bg-[#061410] hover:bg-[#0A211B] border border-emerald-500/30 text-emerald-300 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
-                Analyze Resume →
+                <span>Open Full Resume Scanner</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 hover:border-brand-orange/20 transition-all duration-300 flex flex-col justify-between h-[180px] group relative overflow-hidden content-panel">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-brand-orange/5 rounded-full blur-2xl group-hover:bg-brand-orange/10 transition-colors pointer-events-none" />
-              <div className="flex items-start justify-between">
-                <div className="p-3 bg-brand-orange/10 rounded-xl border border-brand-orange/20">
-                  <Video className="w-5 h-5 text-brand-orange" />
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-zinc-200 transition-colors" />
-              </div>
+            <div className="lg:col-span-7 glass-panel rounded-3xl p-6 border border-emerald-500/20 flex flex-col justify-between">
               <div>
-                <h4 className="text-base font-bold text-zinc-100 mb-1 group-hover:text-brand-orange transition-colors">
-                  Interview Simulator (IR)
-                </h4>
-                <p className="text-xs text-zinc-400">
-                  Start a live screen session with real voice-recognition answers.
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-teal-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                    <span>AI Recommended Action Plan</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    High Priority
+                  </span>
+                </div>
+
+                <h3 className="text-lg font-bold text-white mb-2">Strengthen STAR Method Quantification</h3>
+                <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                  Based on your latest 3 mock interview evaluations, your technical depth is high (88%), but your behavioral responses lack specific percentage metrics when explaining project outcomes.
                 </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3 bg-[#040D0A]/70 rounded-2xl border border-emerald-500/15 flex items-start gap-2 text-xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-white block">Step 1: Metric Prep</strong>
+                      <span className="text-slate-400 text-[11px]">List 3 quantified achievements (e.g. "reduced latency by 35%").</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-[#040D0A]/70 rounded-2xl border border-emerald-500/15 flex items-start gap-2 text-xs">
+                    <Award className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-white block">Step 2: 7-Day Sprint</strong>
+                      <span className="text-slate-400 text-[11px]">Complete Day 4 Behavioral STAR exercises.</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <button 
-                onClick={() => navigate('/interview')}
-                className="mt-3 text-xs font-bold text-brand-orange hover:underline text-left"
-              >
-                Configure Chamber →
-              </button>
+
+              <div className="mt-6 flex items-center gap-3">
+                <button
+                  onClick={() => setActiveTab('plan')}
+                  className="flex-1 py-2.5 px-4 bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 border border-teal-500/30 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>View 7-Day Roadmap</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('ai')}
+                  className="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border-0 shadow-md"
+                >
+                  <Bot className="w-3.5 h-3.5 fill-slate-950" />
+                  <span>Open AI Assistant</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        </div>
       )}
 
-      {/* Recent History Table */}
-      {hasSessions && (
-        <div className="glass-panel p-6 rounded-2xl border border-brand-dark-border/50 history-table">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-zinc-100">Recent Sessions</h3>
-            <span className="text-xs text-zinc-400 font-semibold">Showing past evaluations</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-brand-dark-border text-zinc-500 font-bold uppercase tracking-wider">
-                  <th className="pb-3 pt-2">Role</th>
-                  <th className="pb-3 pt-2">Date</th>
-                  <th className="pb-3 pt-2">Difficulty</th>
-                  <th className="pb-3 pt-2">Questions</th>
-                  <th className="pb-3 pt-2 text-right">Score</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-brand-dark-border/40 text-zinc-300 font-medium">
-                {history.map((session, idx) => (
-                  <tr key={idx} className="hover:bg-zinc-900/20 transition-colors">
-                    <td className="py-3 font-semibold text-zinc-200">{session.role}</td>
-                    <td className="py-3 text-zinc-400">{session.date}</td>
-                    <td className="py-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        session.difficulty === 'Easy' ? 'bg-emerald-950/30 text-emerald-400 border border-emerald-500/10' :
-                        session.difficulty === 'Hard' ? 'bg-red-950/30 text-red-400 border border-red-500/10' :
-                        'bg-brand-orange/10 text-brand-orange border border-brand-orange/10'
-                      }`}>
-                        {session.difficulty}
-                      </span>
-                    </td>
-                    <td className="py-3 text-zinc-400">{session.qaCount} items</td>
-                    <td className="py-3 text-right font-extrabold text-brand-orange">{session.score}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+      {activeTab === 'ai' && <AICopilotTab targetRole={userState.targetRole} />}
+
+      {activeTab === 'plan' && <StudyPlanTab targetRole={userState.targetRole} />}
+
+      {activeTab === 'matrix' && <SkillMatrixTab history={history} />}
+
+      {activeTab === 'vault' && <SessionVaultTab history={history} />}
+
+      <AICoachWidget targetRole={userState.targetRole} />
+
+      <TargetRoleModal
+        isOpen={isRoleModalOpen}
+        onClose={() => setIsRoleModalOpen(false)}
+        currentRole={userState.targetRole}
+        currentCompany={userState.targetCompany}
+        currentLevel={userState.experienceLevel}
+        onSave={handleSaveRoleSettings}
+      />
     </div>
   );
 };

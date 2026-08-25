@@ -233,6 +233,36 @@
   margin-top: 0.75rem;
 }
 
+.workspace-content .dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.workspace-content .dashboard-page .dash-title {
+  padding: clamp(1rem, 2vw, 1.75rem) 0;
+}
+
+.workspace-content .dashboard-page .glass-panel {
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.workspace-content .dashboard-page .metric-card {
+  min-height: 168px;
+}
+
+.workspace-content .dashboard-page .grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.workspace-content .dashboard-page .content-panel {
+  min-height: 360px;
+}
+
+.workspace-content .dashboard-page .history-table {
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 1100px) {
   .workspace-header {
     flex-wrap: wrap;
@@ -266,6 +296,18 @@
 
   .workspace-content .glass-panel {
     padding: 1rem;
+  }
+
+  .workspace-content .dashboard-page {
+    gap: 2rem;
+  }
+
+  .workspace-content .dashboard-page .glass-panel {
+    padding: 1.25rem;
+  }
+
+  .workspace-content .dashboard-page .metric-card {
+    min-height: 144px;
   }
 }
 
