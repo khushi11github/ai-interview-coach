@@ -471,9 +471,9 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
   const isCoding = config.sessionType === 'coding';
 
   return (
-    <div className="space-y-6 w-full h-[calc(100vh-120px)] flex flex-col pb-6">
+    <div className="space-y-6 w-full h-[calc(100vh-120px)] flex flex-col pb-6 bg-gradient-to-br from-slate-950 via-blue-950/30 to-slate-900">
       {/* Top Session Status Bar */}
-      <div className="flex items-center justify-between border-b border-brand-dark-border/40 pb-4 flex-shrink-0">
+      <div className="flex items-center justify-between border-b border-blue-500/20 pb-4 flex-shrink-0">
         <div>
           <span className="text-[10px] font-bold text-brand-orange uppercase tracking-widest block">
             Live {isCoding ? 'Coding' : 'Verbal'} Simulation
@@ -484,17 +484,17 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 bg-brand-black border border-brand-dark-border px-3 py-1.5 rounded-xl">
-            <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-xs font-bold text-zinc-400 font-mono tracking-wider">REC</span>
-            <span className="text-xs font-semibold text-zinc-300 font-mono border-l border-zinc-700 pl-2">
+          <div className="flex items-center gap-2 bg-gradient-to-r from-red-900/40 to-red-950/40 border border-red-500/40 px-3 py-1.5 rounded-xl shadow-lg shadow-red-500/10">
+            <span className="w-2.5 h-2.5 bg-red-400 rounded-full animate-pulse" />
+            <span className="text-xs font-bold text-red-300 font-mono tracking-wider">REC</span>
+            <span className="text-xs font-semibold text-red-200 font-mono border-l border-red-500/30 pl-2">
               {formatTime(elapsedTime)}
             </span>
           </div>
 
           <button
             onClick={onCancel}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/20 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold rounded-xl transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-red-500/30 to-pink-500/20 hover:from-red-500/50 hover:to-pink-500/40 border border-red-400/40 text-red-300 hover:text-red-100 text-xs font-bold rounded-xl transition shadow-lg shadow-red-500/10"
           >
             <Flag className="w-3.5 h-3.5" />
             <span>Abort Session</span>
