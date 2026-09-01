@@ -503,11 +503,11 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
       </div>
 
       {peerHint && (
-        <div className="p-4 bg-brand-orange/10 border border-brand-orange/20 rounded-2xl flex items-center gap-3 text-xs text-brand-orange animate-pulse flex-shrink-0">
-          <Sparkles className="w-5 h-5 flex-shrink-0 text-brand-orange animate-bounce" />
+        <div className="p-4 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-brand-orange/10 border border-amber-400/30 rounded-2xl flex items-center gap-3 text-xs text-amber-100 animate-pulse flex-shrink-0 shadow-lg shadow-amber-500/10">
+          <Sparkles className="w-5 h-5 flex-shrink-0 text-amber-300 animate-bounce" />
           <div>
-            <span className="font-bold uppercase tracking-wider block text-[9px]">Interviewer Hint</span>
-            <p className="mt-0.5 text-zinc-300 font-medium">{peerHint}</p>
+            <span className="font-bold uppercase tracking-wider block text-[9px] text-amber-200">Interviewer Hint</span>
+            <p className="mt-0.5 text-zinc-200 font-medium">{peerHint}</p>
           </div>
         </div>
       )}
@@ -519,7 +519,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
         <div className={`flex flex-col gap-4 min-h-0 ${isCoding ? 'lg:col-span-4' : 'lg:col-span-5'}`}>
           
           {/* Webcam Box */}
-          <div className="glass-panel rounded-3xl border border-brand-dark-border/80 relative flex-1 min-h-[160px] overflow-hidden flex items-center justify-center bg-zinc-950/80 shadow-2xl">
+          <div className="glass-panel rounded-3xl border border-purple-500/30 relative flex-1 min-h-[160px] overflow-hidden flex items-center justify-center bg-gradient-to-br from-purple-950/60 to-slate-950/60 shadow-2xl shadow-purple-500/10">
             {isCameraOn ? (
               <video 
                 ref={videoRef}
@@ -585,7 +585,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
           </div>
 
           {/* AI Avatar Card */}
-          <div className="glass-panel p-4 rounded-3xl border border-brand-dark-border/80 flex items-center gap-3 bg-zinc-950/20">
+          <div className="glass-panel p-4 rounded-3xl border border-cyan-500/30 flex items-center gap-3 bg-gradient-to-r from-cyan-950/40 to-blue-950/40 shadow-lg shadow-cyan-500/5">
             <div className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all ${
               isSpeaking 
                 ? 'bg-brand-orange/20 border-brand-orange shadow-lg shadow-brand-orange/20 animate-pulse' 
@@ -620,7 +620,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
 
           {/* Staggered Question Panel (Left side in coding, Right side in verbal) */}
           {isCoding && (
-            <div className="glass-panel p-5 rounded-3xl border border-brand-dark-border/80 space-y-3 relative overflow-hidden bg-brand-black/40 flex-shrink-0">
+            <div className="glass-panel p-5 rounded-3xl border border-emerald-500/30 space-y-3 relative overflow-hidden bg-gradient-to-br from-emerald-950/40 to-teal-950/30 flex-shrink-0 shadow-lg shadow-emerald-500/5">
               <div className="absolute top-0 right-0 p-3 font-bold text-zinc-700 text-[10px]">
                 Challenge {currentIndex + 1} of {questions.length}
               </div>
@@ -646,7 +646,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
             <div className="flex-1 flex flex-col md:flex-row gap-5 min-h-0">
               
               {/* Code Editor Panel */}
-              <div className="glass-panel p-5 rounded-3xl border border-brand-dark-border/80 flex-1 flex flex-col min-h-0 bg-brand-black/20">
+              <div className="glass-panel p-5 rounded-3xl border border-indigo-500/30 flex-1 flex flex-col min-h-0 bg-gradient-to-br from-indigo-950/30 to-slate-950/40 shadow-lg shadow-indigo-500/5">
                 <div className="flex items-center justify-between mb-3 flex-shrink-0">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Whiteboard Code Editor</span>
@@ -696,7 +696,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
               </div>
               
               {/* Spoken Explanation Panel */}
-              <div className="glass-panel p-5 rounded-3xl border border-brand-dark-border/80 flex-1 flex flex-col min-h-0 bg-brand-black/20">
+              <div className="glass-panel p-5 rounded-3xl border border-pink-500/30 flex-1 flex flex-col min-h-0 bg-gradient-to-br from-pink-950/30 to-rose-950/30 shadow-lg shadow-pink-500/5">
                 <div className="flex items-center justify-between mb-3 flex-shrink-0">
                   <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
                     Spoken Logic Explanation
@@ -748,7 +748,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
             /* Verbal Mode Workspace (Standard Layout) */
             <>
               {/* Question Card */}
-              <div className="glass-panel p-6 rounded-3xl border border-brand-dark-border/80 space-y-4 relative overflow-hidden bg-brand-black/40">
+              <div className="glass-panel p-6 rounded-3xl border border-sky-500/30 space-y-4 relative overflow-hidden bg-gradient-to-br from-sky-950/40 to-slate-950/30 shadow-lg shadow-sky-500/5">
                 <div className="absolute top-0 right-0 p-4 font-bold text-zinc-700 text-sm">
                   Q{currentIndex + 1} of {questions.length}
                 </div>
@@ -771,7 +771,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
               </div>
               
               {/* Answer Area */}
-              <div className="glass-panel p-6 rounded-3xl border border-brand-dark-border/80 flex-1 flex flex-col min-h-0">
+              <div className="glass-panel p-6 rounded-3xl border border-violet-500/30 flex-1 flex flex-col min-h-0 bg-gradient-to-br from-violet-950/30 to-slate-950/40 shadow-lg shadow-violet-500/5">
                 <div className="flex items-center justify-between mb-3 flex-shrink-0">
                   <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
                     Your Answer Transcript
