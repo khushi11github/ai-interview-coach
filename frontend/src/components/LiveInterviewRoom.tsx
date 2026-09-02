@@ -785,7 +785,7 @@ const LiveInterviewRoom: React.FC<LiveInterviewRoomProps> = ({ config, onFinish,
                 <textarea
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
-                  placeholder="Your answer will appear here dynamically as you speak, or you can type directly inside this editor..."
+                  placeholder="Your answer will appear here dynamically as you speak, or you can type directly inside this editor...."
                   className="w-full flex-1 bg-brand-black/50 border border-brand-dark-border rounded-2xl p-4 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-brand-orange/40 focus:ring-1 focus:ring-brand-orange-glow resize-none min-h-[120px]"
                 />
 
