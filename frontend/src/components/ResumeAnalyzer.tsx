@@ -148,6 +148,23 @@ const roleAnalyses: Record<string, { questions: string[] }> = {
   }
 };
 
+const MAX_RESUME_SIZE = 5 * 1024 * 1024;
+const SUPPORTED_RESUME_EXTENSIONS = ['.pdf', '.docx', '.txt'];
+
+const getResumeFileError = (candidate: File): string | null => {
+  const extension = candidate.name.slice(candidate.name.lastIndexOf('.')).toLowerCase();
+
+  if (!SUPPORTED_RESUME_EXTENSIONS.includes(extension)) {
+    return 'Choose a PDF, DOCX, or TXT resume.';
+  }
+
+  if (candidate.size > MAX_RESUME_SIZE) {
+    return 'Resume files must be 5 MB or smaller.';
+  }
+
+  return null;
+};
+
 const ResumeAnalyzer: React.FC = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
@@ -157,6 +174,7 @@ const ResumeAnalyzer: React.FC = () => {
   const [jobDescription, setJobDescription] = useState<string>('');
   const [rawFileText, setRawFileText] = useState<string>('');
   const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -166,20 +184,28 @@ const ResumeAnalyzer: React.FC = () => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile.type === 'application/pdf' || droppedFile.name.endsWith('.pdf') || droppedFile.name.endsWith('.docx') || droppedFile.name.endsWith('.txt')) {
-        setFile(droppedFile);
-      }
+      const error = getResumeFileError(droppedFile);
+      setFileError(error);
+      if (!error) setFile(droppedFile);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      const error = getResumeFileError(selectedFile);
+      setFileError(error);
+      if (!error) setFile(selectedFile);
     }
   };
 
   const triggerAnalysis = () => {
     if (!file) return;
+    const error = getResumeFileError(file);
+    if (error) {
+      setFileError(error);
+      return;
+    }
     setAnalyzing(true);
     setProgress(0);
     setAnalysis(null);
@@ -397,6 +423,11 @@ const ResumeAnalyzer: React.FC = () => {
             <p className="text-[10px] text-zinc-500 max-w-xs mt-1">
               Supports PDF, DOCX, or TXT (Max 5MB)
             </p>
+            {fileError && (
+              <p role="alert" className="text-[11px] text-red-400 mt-2 max-w-xs">
+                {fileError}
+              </p>
+            )}
 
             <div className="flex items-center gap-3 mt-5">
               <label className="px-4 py-2 bg-zinc-900 border border-brand-dark-border text-zinc-300 font-semibold text-[10px] rounded-xl hover:text-zinc-100 hover:border-brand-orange/30 cursor-pointer transition-colors">
