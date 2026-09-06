@@ -41,7 +41,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
   ];
 
   return (
-    <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm relative overflow-hidden h-full flex flex-col justify-between">
+    <div className="bg-white rounded-3xl p-8 border-0 shadow-2xs relative overflow-hidden h-full flex flex-col justify-between w-full">
       {/* Top Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -53,7 +53,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
         </div>
 
         {/* Benchmark Pill */}
-        <div className={`px-3 py-1 rounded-xl border ${status.borderClass} flex items-center gap-1.5`}>
+        <div className={`px-3.5 py-1.5 rounded-xl border-0 ${status.borderClass} flex items-center gap-1.5`}>
           <Award className={`w-3.5 h-3.5 ${status.textClass}`} />
           <span className={`text-xs font-bold ${status.textClass}`}>{status.label}</span>
         </div>
@@ -93,7 +93,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 mt-2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+          <div className="flex items-center gap-1.5 mt-2 bg-emerald-50 px-3 py-1 rounded-full border-0">
             <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
             <span className="text-xs font-bold text-emerald-800">+{momentum}% Momentum</span>
             <span className="text-[10px] text-slate-500">vs last 7 days</span>
@@ -107,7 +107,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
                 <span className="text-slate-700">{item.name}</span>
                 <span className={item.text}>{item.value}%</span>
               </div>
-              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-[1px] border border-slate-200">
+              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border-0">
                 <div
                   className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out shadow-2xs`}
                   style={{ width: `${item.value}%` }}
@@ -133,6 +133,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
       </div>
     </div>
   );
+
 };
 
 export default ReadinessGauge;

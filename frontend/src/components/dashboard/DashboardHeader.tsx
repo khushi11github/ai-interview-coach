@@ -31,8 +31,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 mb-8 border border-slate-200/90 shadow-sm relative overflow-hidden">
+    <div className="bg-white rounded-3xl p-8 sm:p-10 mb-8 border-0 shadow-2xs relative overflow-hidden w-full">
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+
         
         {/* Left Side: Avatar + Greetings + Role Context */}
         <div className="flex items-start sm:items-center gap-4">

@@ -177,7 +177,7 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="dashboard-container w-full px-2 sm:px-4 lg:px-6 py-4 space-y-8 select-none">
+    <div className="dashboard-container w-full px-4 sm:px-8 lg:px-10 py-6 space-y-8 select-none">
       
       {/* Executive Command Header */}
       <DashboardHeader
@@ -191,7 +191,7 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Main Tab Switcher Bar */}
-      <div className="bg-white rounded-2xl p-2 border border-slate-200/80 shadow-2xs flex items-center justify-between gap-2 overflow-x-auto">
+      <div className="bg-white rounded-2xl p-2 border-0 shadow-2xs flex items-center justify-between gap-2 overflow-x-auto">
         <div className="flex items-center gap-2 min-w-max">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -203,7 +203,7 @@ const Dashboard: React.FC = () => {
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive
                     ? 'bg-slate-900 text-white shadow-xs font-black'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border-0'
                 }`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
@@ -222,7 +222,7 @@ const Dashboard: React.FC = () => {
 
         <button
           onClick={() => navigate('/interview')}
-          className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer shadow-xs"
+          className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer shadow-xs border-0"
         >
           <Play className="w-3.5 h-3.5 fill-white" />
           <span>Quick Chamber</span>
@@ -231,10 +231,10 @@ const Dashboard: React.FC = () => {
 
       {/* Tab Contents */}
       {activeTab === 'overview' && (
-        <div className="space-y-8">
+        <div className="space-y-8 w-full">
           {/* Main Top Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-7">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-stretch">
+            <div className="lg:col-span-7 flex flex-col">
               <ReadinessGauge
                 score={avgScore}
                 technical={avgTechnical}
@@ -246,15 +246,15 @@ const Dashboard: React.FC = () => {
               />
             </div>
 
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-5 flex flex-col">
               <QuickPracticeStudio />
             </div>
           </div>
 
           {/* Open Section: ATS Audit & Recommended Action Plan */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-stretch">
             {/* ATS Section */}
-            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="lg:col-span-5 bg-white rounded-3xl p-8 border-0 shadow-2xs flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-black uppercase tracking-wider text-emerald-700 flex items-center gap-2">
@@ -267,7 +267,7 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-5 my-4">
-                  <div className="w-20 h-20 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-3xl font-black text-emerald-700 shrink-0">
+                  <div className="w-20 h-20 rounded-2xl bg-emerald-50 border-0 flex items-center justify-center text-3xl font-black text-emerald-700 shrink-0">
                     {resume ? `${resume.score}%` : '86%'}
                   </div>
                   <div>
@@ -281,16 +281,16 @@ const Dashboard: React.FC = () => {
                 <div className="space-y-2 mt-6">
                   <span className="text-xs font-bold text-slate-400 block uppercase tracking-wider">Detected Keyword Match</span>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-lg">
+                    <span className="px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-lg border-0">
                       ✓ React 19
                     </span>
-                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-lg">
+                    <span className="px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-lg border-0">
                       ✓ TypeScript
                     </span>
-                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-lg">
+                    <span className="px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-lg border-0">
                       ✓ System Design
                     </span>
-                    <span className="px-3 py-1 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold rounded-lg">
+                    <span className="px-3 py-1 bg-rose-50 text-rose-700 text-xs font-bold rounded-lg border-0">
                       ! Redis Caching
                     </span>
                   </div>
@@ -299,7 +299,7 @@ const Dashboard: React.FC = () => {
 
               <button
                 onClick={() => navigate('/resume-analyzer')}
-                className="mt-8 w-full py-3 px-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="mt-8 w-full py-3 px-4 bg-slate-50 hover:bg-slate-100 border-0 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <span>Open Full Resume Scanner</span>
                 <ArrowUpRight className="w-4 h-4 text-slate-500" />
@@ -307,14 +307,14 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Action Plan Section */}
-            <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div className="lg:col-span-7 bg-white rounded-3xl p-8 border-0 shadow-2xs flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-black uppercase tracking-wider text-teal-700 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-teal-600" />
                     <span>AI Recommended Action Plan</span>
                   </span>
-                  <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                  <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border-0">
                     High Priority
                   </span>
                 </div>
@@ -325,7 +325,7 @@ const Dashboard: React.FC = () => {
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/70 space-y-1">
+                  <div className="p-4 bg-slate-50 rounded-2xl border-0 space-y-1">
                     <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                       <span>Step 1: Metric Prep</span>
@@ -335,7 +335,7 @@ const Dashboard: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/70 space-y-1">
+                  <div className="p-4 bg-slate-50 rounded-2xl border-0 space-y-1">
                     <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
                       <Award className="w-4 h-4 text-teal-600" />
                       <span>Step 2: 7-Day Sprint</span>
@@ -350,14 +350,14 @@ const Dashboard: React.FC = () => {
               <div className="mt-8 flex items-center gap-4">
                 <button
                   onClick={() => setActiveTab('plan')}
-                  className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border border-slate-200"
+                  className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border-0"
                 >
                   <Calendar className="w-4 h-4 text-slate-600" />
                   <span>View 7-Day Roadmap</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('ai')}
-                  className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                  className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border-0 shadow-xs"
                 >
                   <Bot className="w-4 h-4 fill-white" />
                   <span>Open AI Assistant</span>

@@ -69,7 +69,7 @@ const features: FeatureCard[] = [
 
 const WhyChooseSection: React.FC = () => {
   return (
-    <section className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/80 shadow-sm space-y-10 text-slate-900">
+    <section className="bg-white rounded-3xl p-8 sm:p-12 border-0 shadow-2xs space-y-10 text-slate-900 w-full">
       {/* ── Section Header ── */}
       <div className="text-center space-y-3 max-w-3xl mx-auto">
         <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
@@ -81,17 +81,17 @@ const WhyChooseSection: React.FC = () => {
       </div>
 
       {/* ── Feature Cards Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
         {features.map((feat) => {
           const Icon = feat.icon;
           return (
             <div
               key={feat.title}
-              className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow duration-300 flex flex-col items-start justify-between min-h-[260px]"
+              className="bg-slate-50/80 rounded-2xl p-6 border-0 hover:bg-slate-100/90 transition-colors flex flex-col items-start justify-between min-h-[250px]"
             >
               <div>
                 {/* Icon Circle */}
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-6 text-slate-800">
+                <div className="w-12 h-12 rounded-full bg-white shadow-2xs flex items-center justify-center mb-6 text-slate-800">
                   <Icon className="w-6 h-6 stroke-[2]" />
                 </div>
 
@@ -112,6 +112,7 @@ const WhyChooseSection: React.FC = () => {
     </section>
   );
 };
+
 
 export default WhyChooseSection;
 

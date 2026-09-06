@@ -44,7 +44,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <header className="workspace-header w-full bg-white/95 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 py-3 select-none z-30 shrink-0 shadow-xs relative">
+    <header className="workspace-header w-full bg-white flex items-center justify-between px-6 sm:px-10 py-3.5 select-none z-30 shrink-0 shadow-2xs border-0 relative">
       
       {/* Left: Brand logo area */}
       <div className="flex items-center gap-6">
