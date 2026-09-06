@@ -182,27 +182,31 @@
 }
 
 .workspace-content {
-  width: min(100%, 1440px);
-  margin: 0 auto;
-  padding: clamp(1.25rem, 2.5vw, 2.25rem) clamp(1rem, 3vw, 2.5rem) 3rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 1.5rem clamp(1rem, 3vw, 2.5rem) 3rem;
 }
 
 .workspace-content--narrow {
-  max-width: 1180px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .workspace-content--room {
-  max-width: 1440px;
+  width: 100%;
+  max-width: 100%;
 }
 
-/* Keep workspace screens scannable without changing their content or behavior. */
+/* Open, un-cluttered workspace layout */
 .workspace-content .space-y-8 {
-  row-gap: 1.25rem;
+  row-gap: 2rem;
 }
 
 .workspace-content .space-y-6 {
-  row-gap: 1rem;
+  row-gap: 1.5rem;
 }
+
 
 .workspace-content .gap-6 {
   gap: 1rem;
