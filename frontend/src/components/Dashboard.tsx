@@ -11,6 +11,7 @@ import SessionVaultTab from './dashboard/SessionVaultTab';
 import AICopilotTab from './dashboard/AICopilotTab';
 import AICoachWidget from './dashboard/AICoachWidget';
 import TargetRoleModal from './dashboard/TargetRoleModal';
+import WhyChooseSection from './dashboard/WhyChooseSection';
 
 interface HistorySession {
   identifier: string;
@@ -355,6 +356,9 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* ── Why Choose Us Feature Grid ── */}
+          <WhyChooseSection />
         </div>
       )}
 
