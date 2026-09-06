@@ -12,15 +12,21 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return user ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
+// Helper component to redirect logged in users away from auth pages
+const PublicAuthRoute = ({ children }: { children: React.ReactNode }) => {
+  const user = localStorage.getItem('user');
+  return user ? <Navigate to="/dashboard" replace /> : <>{children}</>;
+};
+
 function App() {
   const user = localStorage.getItem('user');
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/signup" replace />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+        <Route path="/login" element={<PublicAuthRoute><LoginPage /></PublicAuthRoute>} />
+        <Route path="/signup" element={<PublicAuthRoute><SignupPage /></PublicAuthRoute>} />
         
         {/* Protected Routes */}
         <Route path="/home" element={<Navigate to="/dashboard" replace />} />
@@ -31,10 +37,10 @@ function App() {
         
         {/* Fallback route */}
         <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
-
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+

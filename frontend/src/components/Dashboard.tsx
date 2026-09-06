@@ -191,7 +191,7 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Main Tab Switcher Bar */}
-      <div className="glass-panel rounded-2xl p-1.5 border border-emerald-500/20 flex items-center justify-between gap-2 overflow-x-auto">
+      <div className="bg-white rounded-2xl p-1.5 border border-slate-200/90 shadow-2xs flex items-center justify-between gap-2 overflow-x-auto">
         <div className="flex items-center gap-1.5 min-w-max">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -200,17 +200,17 @@ const Dashboard: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 text-emerald-300 border border-emerald-500/40 shadow-lg shadow-emerald-500/10'
-                    : 'text-slate-400 hover:text-white hover:bg-[#061410] border border-transparent'
+                    ? 'bg-slate-100 text-emerald-800 border border-slate-300/80 shadow-2xs font-extrabold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
                 <span>{tab.label}</span>
                 {tab.badge && (
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                    isActive ? 'bg-emerald-500/30 text-emerald-200' : 'bg-[#040D0A] text-slate-400'
+                    isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500'
                   }`}>
                     {tab.badge}
                   </span>
@@ -222,9 +222,9 @@ const Dashboard: React.FC = () => {
 
         <button
           onClick={() => navigate('/interview')}
-          className="hidden md:flex items-center gap-1.5 px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold rounded-xl transition-all cursor-pointer"
+          className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer shadow-2xs"
         >
-          <Play className="w-3.5 h-3.5 fill-emerald-300" />
+          <Play className="w-3.5 h-3.5 fill-white" />
           <span>Quick Chamber</span>
         </button>
       </div>
@@ -251,26 +251,26 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-5 glass-panel rounded-3xl p-6 border border-emerald-500/20 flex flex-col justify-between">
+            <div className="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5" />
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-700 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Resume ATS Audit</span>
                   </span>
-                  <span className="text-[10px] font-bold text-slate-300 bg-[#061410] px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
                     {resume ? resume.filename : 'Default Resume'}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-4 my-3">
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-2xl font-black text-emerald-400">
+                  <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-2xl font-black text-emerald-700">
                     {resume ? `${resume.score}%` : '86%'}
                   </div>
                   <div>
-                    <h3 className="text-sm font-extrabold text-white">ATS Target Compatibility</h3>
-                    <p className="text-xs text-slate-300 mt-0.5">
-                      Matched against <strong className="text-white">{userState.targetRole}</strong> requirements.
+                    <h3 className="text-sm font-extrabold text-slate-900">ATS Target Compatibility</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Matched against <strong className="text-slate-800">{userState.targetRole}</strong> requirements.
                     </p>
                   </div>
                 </div>
@@ -278,16 +278,16 @@ const Dashboard: React.FC = () => {
                 <div className="space-y-2 mt-4">
                   <span className="text-[10px] font-bold uppercase text-slate-400 block">Scanned Keywords</span>
                   <div className="flex flex-wrap gap-1.5">
-                    <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-md">
+                    <span className="px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold rounded-md">
                       ✓ React 19
                     </span>
-                    <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-md">
+                    <span className="px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold rounded-md">
                       ✓ TypeScript
                     </span>
-                    <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold rounded-md">
+                    <span className="px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-bold rounded-md">
                       ✓ System Design
                     </span>
-                    <span className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-bold rounded-md">
+                    <span className="px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold rounded-md">
                       ! Redis Caching
                     </span>
                   </div>
@@ -296,43 +296,43 @@ const Dashboard: React.FC = () => {
 
               <button
                 onClick={() => navigate('/resume-analyzer')}
-                className="mt-6 w-full py-2.5 px-4 bg-[#061410] hover:bg-[#0A211B] border border-emerald-500/30 text-emerald-300 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="mt-6 w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>Open Full Resume Scanner</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />
               </button>
             </div>
 
-            <div className="lg:col-span-7 glass-panel rounded-3xl p-6 border border-emerald-500/20 flex flex-col justify-between">
+            <div className="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-teal-300 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-teal-700 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-teal-600" />
                     <span>AI Recommended Action Plan</span>
                   </span>
-                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     High Priority
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2">Strengthen STAR Method Quantification</h3>
-                <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">Strengthen STAR Method Quantification</h3>
+                <p className="text-xs text-slate-600 leading-relaxed mb-4">
                   Based on your latest 3 mock interview evaluations, your technical depth is high (88%), but your behavioral responses lack specific percentage metrics when explaining project outcomes.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 bg-[#040D0A]/70 rounded-2xl border border-emerald-500/15 flex items-start gap-2 text-xs">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-start gap-2.5 text-xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-white block">Step 1: Metric Prep</strong>
-                      <span className="text-slate-400 text-[11px]">List 3 quantified achievements (e.g. "reduced latency by 35%").</span>
+                      <strong className="text-slate-900 block">Step 1: Metric Prep</strong>
+                      <span className="text-slate-500 text-[11px]">List 3 quantified achievements (e.g. "reduced latency by 35%").</span>
                     </div>
                   </div>
-                  <div className="p-3 bg-[#040D0A]/70 rounded-2xl border border-emerald-500/15 flex items-start gap-2 text-xs">
-                    <Award className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+                  <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-start gap-2.5 text-xs">
+                    <Award className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-white block">Step 2: 7-Day Sprint</strong>
-                      <span className="text-slate-400 text-[11px]">Complete Day 4 Behavioral STAR exercises.</span>
+                      <strong className="text-slate-900 block">Step 2: 7-Day Sprint</strong>
+                      <span className="text-slate-500 text-[11px]">Complete Day 4 Behavioral STAR exercises.</span>
                     </div>
                   </div>
                 </div>
@@ -341,16 +341,16 @@ const Dashboard: React.FC = () => {
               <div className="mt-6 flex items-center gap-3">
                 <button
                   onClick={() => setActiveTab('plan')}
-                  className="flex-1 py-2.5 px-4 bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 border border-teal-500/30 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
-                  <Calendar className="w-3.5 h-3.5" />
+                  <Calendar className="w-3.5 h-3.5 text-slate-600" />
                   <span>View 7-Day Roadmap</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('ai')}
-                  className="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border-0 shadow-md"
+                  className="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer border-0 shadow-xs"
                 >
-                  <Bot className="w-3.5 h-3.5 fill-slate-950" />
+                  <Bot className="w-3.5 h-3.5 fill-white" />
                   <span>Open AI Assistant</span>
                 </button>
               </div>

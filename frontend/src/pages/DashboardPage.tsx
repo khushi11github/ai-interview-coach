@@ -14,11 +14,7 @@ const DashboardPage: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div className="workspace-shell flex flex-col h-screen bg-[#050D0A] text-slate-100 overflow-hidden relative">
-      {/* Background ambient glowing orbs */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/8 rounded-full blur-[140px] pointer-events-none animate-pulse-glow" />
-      <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-teal-500/8 rounded-full blur-[160px] pointer-events-none animate-pulse-glow" />
-
+    <div className="workspace-shell flex flex-col h-screen bg-slate-50 text-slate-900 overflow-hidden relative">
       {/* Header Navigation */}
       <Sidebar />
 
@@ -33,3 +29,4 @@ const DashboardPage: React.FC = () => {
 };
 
 export default DashboardPage;
+

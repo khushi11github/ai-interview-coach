@@ -25,35 +25,35 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   const getStatus = (val: number) => {
-    if (val >= 85) return { label: 'FAANG / Tier-1 Ready', color: '#00F5A0', textClass: 'text-emerald-400', borderClass: 'border-emerald-500/40' };
-    if (val >= 70) return { label: 'Mid-Level Competitive', color: '#00D9F5', textClass: 'text-teal-300', borderClass: 'border-teal-500/40' };
-    if (val >= 50) return { label: 'Building Foundation', color: '#FACC15', textClass: 'text-amber-400', borderClass: 'border-amber-500/40' };
-    return { label: 'Needs Targeted Drill', color: '#FF5252', textClass: 'text-rose-400', borderClass: 'border-rose-500/40' };
+    if (val >= 85) return { label: 'FAANG / Tier-1 Ready', color: '#059669', textClass: 'text-emerald-700', borderClass: 'border-emerald-200 bg-emerald-50' };
+    if (val >= 70) return { label: 'Mid-Level Competitive', color: '#0284C7', textClass: 'text-sky-700', borderClass: 'border-sky-200 bg-sky-50' };
+    if (val >= 50) return { label: 'Building Foundation', color: '#D97706', textClass: 'text-amber-700', borderClass: 'border-amber-200 bg-amber-50' };
+    return { label: 'Needs Targeted Drill', color: '#E11D48', textClass: 'text-rose-700', borderClass: 'border-rose-200 bg-rose-50' };
   };
 
   const status = getStatus(score);
 
   const subMetrics = [
-    { name: 'Technical Depth', value: technical, color: 'bg-emerald-400', text: 'text-emerald-400' },
-    { name: 'STAR Structure', value: structure, color: 'bg-teal-400', text: 'text-teal-400' },
-    { name: 'Communication', value: communication, color: 'bg-cyan-400', text: 'text-cyan-400' },
-    { name: 'Confidence & Pitch', value: confidence, color: 'bg-lime-400', text: 'text-lime-400' }
+    { name: 'Technical Depth', value: technical, color: 'bg-emerald-600', text: 'text-emerald-700' },
+    { name: 'STAR Structure', value: structure, color: 'bg-teal-600', text: 'text-teal-700' },
+    { name: 'Communication', value: communication, color: 'bg-sky-600', text: 'text-sky-700' },
+    { name: 'Confidence & Pitch', value: confidence, color: 'bg-indigo-600', text: 'text-indigo-700' }
   ];
 
   return (
-    <div className="glass-panel rounded-3xl p-6 border border-emerald-500/20 shadow-2xl relative overflow-hidden h-full flex flex-col justify-between">
+    <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm relative overflow-hidden h-full flex flex-col justify-between">
       {/* Top Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5" />
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-700 flex items-center gap-1.5">
+            <Activity className="w-3.5 h-3.5 text-emerald-600" />
             <span>AI Career Readiness Index</span>
           </span>
-          <h2 className="text-xl font-bold text-white mt-0.5">Overall Readiness Cockpit</h2>
+          <h2 className="text-xl font-bold text-slate-900 mt-0.5">Overall Readiness Cockpit</h2>
         </div>
 
         {/* Benchmark Pill */}
-        <div className={`px-3 py-1 rounded-xl bg-[#061410] border ${status.borderClass} flex items-center gap-1.5`}>
+        <div className={`px-3 py-1 rounded-xl border ${status.borderClass} flex items-center gap-1.5`}>
           <Award className={`w-3.5 h-3.5 ${status.textClass}`} />
           <span className={`text-xs font-bold ${status.textClass}`}>{status.label}</span>
         </div>
@@ -69,7 +69,7 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
                 cx="65"
                 cy="65"
                 r={radius}
-                className="stroke-[#0B2119]"
+                className="stroke-slate-100"
                 strokeWidth="10"
                 fill="transparent"
               />
@@ -84,20 +84,19 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
                 strokeLinecap="round"
                 fill="transparent"
                 className="transition-all duration-1000 ease-out"
-                style={{ filter: `drop-shadow(0 0 10px ${status.color})` }}
               />
             </svg>
 
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-4xl font-black text-white tracking-tight">{score}%</span>
-              <span className="text-[10px] font-bold text-emerald-400/80 uppercase tracking-wider mt-0.5">Readiness Score</span>
+              <span className="text-4xl font-black text-slate-900 tracking-tight">{score}%</span>
+              <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider mt-0.5">Readiness Score</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 mt-2 bg-[#061410] px-3 py-1 rounded-full border border-emerald-500/20">
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-xs font-bold text-emerald-400">+{momentum}% Momentum</span>
-            <span className="text-[10px] text-slate-400">vs last 7 days</span>
+          <div className="flex items-center gap-1.5 mt-2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="text-xs font-bold text-emerald-800">+{momentum}% Momentum</span>
+            <span className="text-[10px] text-slate-500">vs last 7 days</span>
           </div>
         </div>
 
@@ -105,12 +104,12 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
           {subMetrics.map((item) => (
             <div key={item.name} className="space-y-1">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-slate-200">{item.name}</span>
+                <span className="text-slate-700">{item.name}</span>
                 <span className={item.text}>{item.value}%</span>
               </div>
-              <div className="w-full h-2.5 bg-[#061410] rounded-full overflow-hidden p-[1px] border border-emerald-500/20">
+              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-[1px] border border-slate-200">
                 <div
-                  className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out shadow-xs`}
+                  className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out shadow-2xs`}
                   style={{ width: `${item.value}%` }}
                 />
               </div>
@@ -119,14 +118,14 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
         </div>
       </div>
 
-      <div className="pt-4 mt-2 border-t border-emerald-500/15 flex items-center justify-between text-xs">
-        <span className="text-slate-400 flex items-center gap-1">
-          <Zap className="w-3.5 h-3.5 text-emerald-400" />
+      <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+        <span className="text-slate-500 flex items-center gap-1">
+          <Zap className="w-3.5 h-3.5 text-emerald-600" />
           <span>Calculated live from mock sessions & ATS resume metrics</span>
         </span>
         <button
           onClick={onExploreSkillMatrix}
-          className="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 transition-colors cursor-pointer"
+          className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>Explore Skill Matrix</span>
           <ChevronRight className="w-4 h-4" />
@@ -137,3 +136,4 @@ export const ReadinessGauge: React.FC<ReadinessGaugeProps> = ({
 };
 
 export default ReadinessGauge;
+
