@@ -191,7 +191,7 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Main Tab Switcher Bar */}
-      <div className="bg-white rounded-2xl p-2 border-0 shadow-2xs flex items-center justify-between gap-2 overflow-x-auto">
+      <div className="bg-blue rounded-2xl p-2 border-0 shadow-2xs flex items-center justify-between gap-2 overflow-x-auto">
         <div className="flex items-center gap-2 min-w-max">
           {tabs.map((tab) => {
             const Icon = tab.icon;
