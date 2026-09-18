@@ -1,6 +1,6 @@
-# AI Interview Coach
+# APEXCOACH
 
-AI Interview Coach is a full-stack interview preparation workspace. It gives candidates a focused place to manage interview practice, analyze resumes, review performance, and run live interview sessions.
+APEXCOACH is a full-stack AI interview preparation workspace. It gives candidates a focused place to manage interview practice, analyze resumes, review performance, and run live interview sessions.
 
 ## Features
 
@@ -61,7 +61,11 @@ Create `backend/.env`:
 PORT=5000
 CLIENT_URL=http://localhost:5173
 MONGO_URI=your_mongodb_connection_string
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o-mini
 ```
+
+The AI features require an OpenAI API key on the backend. The key is never sent to the browser. Resume analysis uploads the file to the backend, extracts text from TXT, PDF, or DOCX files, and sends the extracted text to the configured OpenAI model. Interview reports send the completed question-and-answer list to the same backend service for structured scoring and feedback.
 
 Start the backend in one terminal:
 
@@ -84,6 +88,13 @@ The frontend uses `http://localhost:5000/api` by default. To override it, set:
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
+
+## AI API Routes
+
+| Route | Purpose |
+| --- | --- |
+| `POST /api/ai/resume/analyze` | Extract and semantically analyze a resume with the configured OpenAI model |
+| `POST /api/ai/interview/evaluate` | Score interview answers and return per-question feedback |
 
 ## Run With Docker Compose
 
@@ -131,5 +142,5 @@ npm start         # Start the API with Node.js
 With the backend running, visit [http://localhost:5000](http://localhost:5000). A healthy server returns:
 
 ```json
-{"message":"AI Interview Coach API is running"}
+{"message":"APEXCOACH API is running"}
 ```

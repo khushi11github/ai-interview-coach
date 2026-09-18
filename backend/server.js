@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/authRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 dotenv.config();
 
@@ -15,10 +16,11 @@ app.use(
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "AI Interview Coach API is running" });
+  res.json({ message: "APEXCOACH API is running" });
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/ai", aiRoutes);
 
 const port = process.env.PORT || 5000;
 const mongoUri = process.env.MONGO_URI;

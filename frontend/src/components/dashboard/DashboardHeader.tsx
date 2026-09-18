@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, FileText, Flame, Target, Settings, CheckCircle2 } from 'lucide-react';
+import { Play, FileText, Flame, Target, Settings } from 'lucide-react';
 
 interface DashboardHeaderProps {
   userName: string;

@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Sparkles
 } from 'lucide-react';
+import { evaluateInterviewWithAI } from '../services/api';
 
 interface InterviewReportProps {
   results: {
@@ -140,6 +141,30 @@ const InterviewReport: React.FC<InterviewReportProps> = ({ results, onReset, onG
       setConfidenceScore(peer ? peer.confidence : Math.round(avgScore * 1.04 > 100 ? 96 : avgScore * 1.04));
     }, 150);
 
+  }, [results]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const evaluateWithAI = async () => {
+      try {
+        const aiReport = await evaluateInterviewWithAI(results);
+        if (cancelled) return;
+        setEvaluations(aiReport.evaluations || []);
+        setOverallScore(aiReport.overallScore);
+        setTechnicalScore(aiReport.technicalScore);
+        setCommunicationScore(aiReport.communicationScore);
+        setStructureScore(aiReport.structureScore);
+        setConfidenceScore(aiReport.confidenceScore);
+      } catch (error) {
+        console.error('AI interview evaluation unavailable; using local evaluation.', error);
+      }
+    };
+
+    evaluateWithAI();
+    return () => {
+      cancelled = true;
+    };
   }, [results]);
 
   const toggleExpand = (index: number) => {

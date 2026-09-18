@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { analyzeResumeWithAI } from '../services/api';
 import { 
   Upload, 
   CheckCircle, 
@@ -25,129 +26,6 @@ interface ResumeAnalysis {
   jobKeywordsCount?: number;
 }
 
-const keywordGroups: Record<string, { name: string; pattern: RegExp }[]> = {
-  'React Developer': [
-    { name: 'React', pattern: /react/i },
-    { name: 'TypeScript', pattern: /typescript|\bts\b/i },
-    { name: 'TailwindCSS', pattern: /tailwind/i },
-    { name: 'Redux Toolkit', pattern: /redux/i },
-    { name: 'REST APIs', pattern: /rest\s?api|apis/i },
-    { name: 'Vite', pattern: /vite/i },
-    { name: 'Git', pattern: /git\b|github|gitlab/i },
-    { name: 'Next.js', pattern: /next\.?js/i },
-    { name: 'GraphQL', pattern: /graphql/i },
-    { name: 'Jest', pattern: /jest/i },
-    { name: 'Webpack', pattern: /webpack/i },
-    { name: 'CI/CD', pattern: /ci\/?cd|continuous integration/i },
-    { name: 'Cypress', pattern: /cypress/i },
-    { name: 'HTML', pattern: /html/i },
-    { name: 'CSS', pattern: /css/i },
-    { name: 'JavaScript', pattern: /javascript|\bjs\b/i }
-  ],
-  'Node.js Developer': [
-    { name: 'Node.js', pattern: /node\.?js|nodejs/i },
-    { name: 'Express.js', pattern: /express/i },
-    { name: 'MongoDB', pattern: /mongo/i },
-    { name: 'REST APIs', pattern: /rest\s?api|apis/i },
-    { name: 'Git', pattern: /git\b|github|gitlab/i },
-    { name: 'JavaScript', pattern: /javascript|\bjs\b/i },
-    { name: 'Docker', pattern: /docker/i },
-    { name: 'Redis', pattern: /redis/i },
-    { name: 'PostgreSQL', pattern: /postgres/i },
-    { name: 'Microservices', pattern: /microservice/i },
-    { name: 'AWS', pattern: /aws|amazon/i },
-    { name: 'Jest', pattern: /jest/i },
-    { name: 'SQL', pattern: /sql\b/i },
-    { name: 'NoSQL', pattern: /nosql/i },
-    { name: 'JWT', pattern: /jwt|token/i }
-  ],
-  'Fullstack Engineer': [
-    { name: 'React', pattern: /react/i },
-    { name: 'Node.js', pattern: /node\.?js|nodejs/i },
-    { name: 'Express.js', pattern: /express/i },
-    { name: 'JavaScript', pattern: /javascript|\bjs\b/i },
-    { name: 'MongoDB', pattern: /mongo/i },
-    { name: 'REST APIs', pattern: /rest\s?api|apis/i },
-    { name: 'Git', pattern: /git\b|github|gitlab/i },
-    { name: 'TypeScript', pattern: /typescript|\bts\b/i },
-    { name: 'Docker', pattern: /docker/i },
-    { name: 'AWS', pattern: /aws|amazon/i },
-    { name: 'System Design', pattern: /system design/i },
-    { name: 'CI/CD', pattern: /ci\/?cd|continuous integration/i },
-    { name: 'SQL', pattern: /sql\b/i },
-    { name: 'HTML', pattern: /html/i },
-    { name: 'CSS', pattern: /css/i }
-  ]
-};
-
-const getImprovementsForMissingKeywords = (missing: string[]): { type: 'critical' | 'warning' | 'tip'; text: string }[] => {
-  const tips: { type: 'critical' | 'warning' | 'tip'; text: string }[] = [];
-  
-  if (missing.includes('TypeScript')) {
-    tips.push({ type: 'critical', text: 'Strongly advise migrating from plain JS to TypeScript to align with modern enterprise standards.' });
-  }
-  if (missing.includes('Next.js')) {
-    tips.push({ type: 'tip', text: 'Consider adding Next.js (App Router, Server Components) to showcase modern React fullstack capability.' });
-  }
-  if (missing.includes('Redux Toolkit')) {
-    tips.push({ type: 'warning', text: 'Missing global state management. Add Redux Toolkit or Recoil references.' });
-  }
-  if (missing.includes('Docker')) {
-    tips.push({ type: 'critical', text: 'Resume lacks containerization tools. Docker experience is highly recommended for backend deployments.' });
-  }
-  if (missing.includes('Redis')) {
-    tips.push({ type: 'warning', text: 'Include database indexing and performance caching techniques using Redis.' });
-  }
-  if (missing.includes('PostgreSQL') || missing.includes('SQL')) {
-    tips.push({ type: 'warning', text: 'Add relational database references (PostgreSQL, MySQL) to demonstrate query knowledge.' });
-  }
-  if (missing.includes('AWS')) {
-    tips.push({ type: 'tip', text: 'Showcase cloud services deployment (AWS ECS, S3, or RDS) to prove production readiness.' });
-  }
-  if (missing.includes('Jest')) {
-    tips.push({ type: 'warning', text: 'Code reliability testing is absent. Add Jest, Cypress, or React Testing Library.' });
-  }
-  if (missing.includes('CI/CD')) {
-    tips.push({ type: 'critical', text: 'Missing automated delivery pipelines. Mention CI/CD workflows (GitHub Actions, Jenkins).' });
-  }
-  if (missing.includes('System Design')) {
-    tips.push({ type: 'tip', text: 'Showcase system architecture decisions (e.g. horizontal scaling, API gateways) rather than just writing feature lists.' });
-  }
-
-  // Default tips if none match
-  if (tips.length === 0) {
-    tips.push({ type: 'tip', text: 'Your resume has excellent keyword matching! Add quantitative metrics (e.g. "reduced latency by 30%") to stand out.' });
-  } else if (tips.length < 3) {
-    tips.push({ type: 'tip', text: 'Structure your work experience section using the STAR method (Situation, Task, Action, Result).' });
-  }
-
-  return tips.slice(0, 3);
-};
-
-const roleAnalyses: Record<string, { questions: string[] }> = {
-  'React Developer': {
-    questions: [
-      'In your resume, you mentioned optimizing React rendering performance. What specific profiler tools did you use, and what was your approach?',
-      'You listed TypeScript. Can you explain a scenario where you had to use generic constraints or utility types to solve a type issue?',
-      'How do you manage complex side effects in Redux Toolkit compared to React Context?'
-    ]
-  },
-  'Node.js Developer': {
-    questions: [
-      'Your resume shows experience with Express and MongoDB. How do you handle database index optimization for high-read queries?',
-      'Explain your process for handling asynchronous error propagation in an Express middleware chain.',
-      'How would you transition a monolithic Node.js application to a microservices architecture using Docker?'
-    ]
-  },
-  'Fullstack Engineer': {
-    questions: [
-      'As a Fullstack Engineer, how do you handle cross-origin resource sharing (CORS) and secure cookies between React and Node?',
-      'Tell me about a time you designed a full system database schema. Why did you choose NoSQL (MongoDB) over a relational database?',
-      'How do you configure a production build process to bundle client assets while hosting the backend server?'
-    ]
-  }
-};
-
 const MAX_RESUME_SIZE = 5 * 1024 * 1024;
 const SUPPORTED_RESUME_EXTENSIONS = ['.pdf', '.docx', '.txt'];
 
@@ -172,7 +50,6 @@ const ResumeAnalyzer: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [selectedRole, setSelectedRole] = useState('React Developer');
   const [jobDescription, setJobDescription] = useState<string>('');
-  const [rawFileText, setRawFileText] = useState<string>('');
   const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
 
@@ -199,7 +76,7 @@ const ResumeAnalyzer: React.FC = () => {
     }
   };
 
-  const triggerAnalysis = () => {
+  const triggerAnalysis = async () => {
     if (!file) return;
     const error = getResumeFileError(file);
     if (error) {
@@ -207,181 +84,47 @@ const ResumeAnalyzer: React.FC = () => {
       return;
     }
     setAnalyzing(true);
-    setProgress(0);
+    setProgress(15);
     setAnalysis(null);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const rawText = e.target?.result as string || '';
-      setRawFileText(rawText);
-
-      // Perform keyword analysis
-      const targets = keywordGroups[selectedRole] || keywordGroups['React Developer'];
-      let activeTargets = targets;
-      let isJobMatch = false;
-
-      if (jobDescription.trim().length > 10) {
-        const jcLower = jobDescription.toLowerCase();
-        const filteredTargets = targets.filter(kw => kw.pattern.test(jcLower));
-        if (filteredTargets.length >= 2) {
-          activeTargets = filteredTargets;
-          isJobMatch = true;
-        }
-      }
-
-      const found: string[] = [];
-      const missing: string[] = [];
-
-      activeTargets.forEach((kw) => {
-        if (kw.pattern.test(rawText)) {
-          found.push(kw.name);
-        } else {
-          missing.push(kw.name);
-        }
-      });
-
-      let computedScore = Math.round((found.length / activeTargets.length) * 100);
-      let isBinaryFallback = false;
-
-      // Heuristic fallback for binary files (PDF/DOCX) that are unreadable by readAsText
-      if (found.length < 3 && file.type !== 'text/plain' && !file.name.endsWith('.txt')) {
-        isBinaryFallback = true;
-        const nameHash = file.name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-        computedScore = 48 + (nameHash % 15) - (file.size % 6);
-        
-        found.length = 0;
-        missing.length = 0;
-
-        const countToFind = Math.round((computedScore / 100) * activeTargets.length);
-        activeTargets.forEach((kw, idx) => {
-          if (idx < countToFind) {
-            found.push(kw.name);
-          } else {
-            missing.push(kw.name);
-          }
-        });
-      }
-
-      // Generate tips based on missing keywords
-      const improvements = getImprovementsForMissingKeywords(missing);
-
-      // Get base questions for the role
-      const baseQuestions = roleAnalyses[selectedRole]?.questions || roleAnalyses['React Developer'].questions;
-
-      // Generate targeted questions testing candidate on requirements from the Job Description they lack
-      let questions = [...baseQuestions];
-      if (isJobMatch && missing.length > 0) {
-        const gapQs = missing.slice(0, 2).map(kw => 
-          `The job description specifies ${kw} as a key requirement, but it is not explicitly detailed in your resume. How have you applied this skill in your past projects?`
-        );
-        questions = [...gapQs, ...baseQuestions.slice(0, Math.max(3 - gapQs.length, 1))];
-      }
-
+    try {
+      const aiAnalysis = await analyzeResumeWithAI(file, selectedRole, jobDescription);
       const finalAnalysis: ResumeAnalysis = {
-        role: selectedRole,
-        score: computedScore,
-        foundKeywords: found,
-        missingKeywords: missing,
-        improvements: improvements,
-        questions: questions,
-        isBinaryFallback: isBinaryFallback,
+        ...aiAnalysis,
         filename: file.name,
-        isJobDescriptionMatch: isJobMatch,
-        jobKeywordsCount: activeTargets.length
+        isBinaryFallback: false,
       };
-
-      // Simulate parsing progress
-      const interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setAnalysis(finalAnalysis);
-              // Save to localStorage
-              localStorage.setItem('resumeAnalysis', JSON.stringify(finalAnalysis));
-              setAnalyzing(false);
-            }, 300);
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 150);
-    };
-    reader.readAsText(file);
+      setProgress(100);
+      setAnalysis(finalAnalysis);
+      localStorage.setItem('resumeAnalysis', JSON.stringify(finalAnalysis));
+    } catch (analysisError) {
+      const message = analysisError instanceof Error ? analysisError.message : 'AI resume analysis failed.';
+      setFileError(message);
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
-  const changeRole = (role: string) => {
+  const changeRole = async (role: string) => {
     setSelectedRole(role);
-    if (analysis && file) {
-      const targets = keywordGroups[role] || keywordGroups['React Developer'];
-      let activeTargets = targets;
-      let isJobMatch = false;
+    if (!file) return;
 
-      if (jobDescription.trim().length > 10) {
-        const jcLower = jobDescription.toLowerCase();
-        const filteredTargets = targets.filter(kw => kw.pattern.test(jcLower));
-        if (filteredTargets.length >= 2) {
-          activeTargets = filteredTargets;
-          isJobMatch = true;
-        }
-      }
-
-      const found: string[] = [];
-      const missing: string[] = [];
-
-      activeTargets.forEach((kw) => {
-        if (rawFileText && kw.pattern.test(rawFileText)) {
-          found.push(kw.name);
-        } else {
-          missing.push(kw.name);
-        }
-      });
-
-      let computedScore = Math.round((found.length / activeTargets.length) * 100);
-      const isBinary = analysis.isBinaryFallback;
-
-      if (isBinary) {
-        const roleHash = role.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        computedScore = 48 + ((file.name.length * 3 + roleHash) % 15) - (file.size % 6);
-
-        found.length = 0;
-        missing.length = 0;
-        const countToFind = Math.round((computedScore / 100) * activeTargets.length);
-        targets.forEach((kw, idx) => {
-          if (idx < countToFind) {
-            found.push(kw.name);
-          } else {
-            missing.push(kw.name);
-          }
-        });
-      }
-
-      const improvements = getImprovementsForMissingKeywords(missing);
-      const baseQuestions = roleAnalyses[role]?.questions || roleAnalyses['React Developer'].questions;
-
-      let questions = [...baseQuestions];
-      if (isJobMatch && missing.length > 0) {
-        const gapQs = missing.slice(0, 2).map(kw => 
-          `The job description specifies ${kw} as a key requirement, but it is not explicitly detailed in your resume. How have you applied this skill in your past projects?`
-        );
-        questions = [...gapQs, ...baseQuestions.slice(0, Math.max(3 - gapQs.length, 1))];
-      }
-
+    setAnalyzing(true);
+    setProgress(15);
+    try {
+      const aiAnalysis = await analyzeResumeWithAI(file, role, jobDescription);
       const updatedAnalysis: ResumeAnalysis = {
-        role: role,
-        score: computedScore,
-        foundKeywords: found,
-        missingKeywords: missing,
-        improvements: improvements,
-        questions: questions,
-        isBinaryFallback: isBinary,
+        ...aiAnalysis,
         filename: file.name,
-        isJobDescriptionMatch: isJobMatch,
-        jobKeywordsCount: activeTargets.length
+        isBinaryFallback: false,
       };
-
+      setProgress(100);
       setAnalysis(updatedAnalysis);
       localStorage.setItem('resumeAnalysis', JSON.stringify(updatedAnalysis));
+    } catch (analysisError) {
+      const message = analysisError instanceof Error ? analysisError.message : 'AI resume analysis failed.';
+      setFileError(message);
+    } finally {
+      setAnalyzing(false);
     }
   };
 
