@@ -162,11 +162,24 @@
 }
 
 .workspace-shell {
+  isolation: isolate;
+  position: relative;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
   background-size: 56px 56px;
   background-position: center top;
+}
+
+.workspace-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(16, 185, 129, 0.1), transparent 28%),
+    radial-gradient(circle at 92% 100%, rgba(14, 165, 233, 0.08), transparent 30%);
 }
 
 .workspace-header {
@@ -186,6 +199,7 @@
   max-width: 100%;
   margin: 0;
   padding: 1.5rem clamp(1rem, 3vw, 2.5rem) 3rem;
+  animation: workspace-enter 420ms ease-out both;
 }
 
 .workspace-content--narrow {
@@ -257,6 +271,28 @@
 
 .workspace-content .dashboard-page .grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
   gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+@keyframes workspace-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .workspace-content .dashboard-page .content-panel {

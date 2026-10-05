@@ -8,7 +8,8 @@
     min-height: 100vh;
     background-color: #F8FAFC;
     color: #0F172A;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+    letter-spacing: 0;
     background-image: 
       radial-gradient(ellipse at 15% 10%, rgba(16, 185, 129, 0.05) 0%, transparent 45%),
       radial-gradient(ellipse at 85% 90%, rgba(14, 165, 233, 0.05) 0%, transparent 50%);
@@ -19,9 +20,32 @@
     box-sizing: border-box;
   }
 
+  ::selection {
+    background: #a7f3d0;
+    color: #064e3b;
+  }
+
+  :focus-visible {
+    outline: 3px solid rgba(13, 148, 136, 0.45);
+    outline-offset: 3px;
+  }
+
   #root {
     min-height: 100vh;
   }
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active:not(:disabled),
+a:active {
+  transform: translateY(1px);
 }
 
 /* Modern Borderless Clean Light Card Utilities */
